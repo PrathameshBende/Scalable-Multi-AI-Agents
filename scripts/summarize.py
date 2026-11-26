@@ -35,6 +35,8 @@ def main() -> None:
         lines.append("")
 
     for p in sorted(glob.glob(os.path.join(R, "agent_*.json"))):
+        if p.endswith("_dev.json"):
+            continue
         d = load(p)
         s = d["summary"]
         lo, hi = s["strict_95ci"]

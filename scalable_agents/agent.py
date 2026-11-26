@@ -32,8 +32,9 @@ Use the tools to look up every fact you need; never guess product data, rates or
 Use the calculator for arithmetic instead of doing it in your head.
 Call one tool at a time if a later step depends on an earlier result.
 When you have the result, reply briefly and end with a final line exactly like:
-FINAL ANSWER: <number>
-(digits only, no units or currency symbols)."""
+FINAL ANSWER: 1234.56
+Write the number in plain decimal form and keep the decimal point.
+Do not add units, currency symbols or thousands separators."""
 
 
 class AgentState(TypedDict):

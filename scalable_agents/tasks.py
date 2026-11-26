@@ -120,6 +120,36 @@ TASKS: list[Task] = [
          lambda: p("quartz water bottle")["stock"] * 15 * _fee("quartz water bottle"), 3),
 ]
 
+# Development set: same task types, different products and numbers. Prompt and
+# configuration changes are tried on these; TASKS (the test set) is only used to
+# report the final number, so the headline is not tuned on the questions it reports.
+DEV_TASKS: list[Task] = [
+    Task("dev01", "lookup", "What is the total price in USD of 7 Quartz Water Bottles?",
+         lambda: _price("quartz water bottle", 7), 2),
+    Task("dev02", "lookup", "How many Lumen Monitor Arms remain in stock after an order of 19?",
+         lambda: p("lumen monitor arm")["stock"] - 19, 2),
+    Task("dev03", "shipping", "How much does it cost in USD to ship 3 Vega Headphones to the west region?",
+         lambda: ship("west", _weight("vega headphones", 3)), 3),
+    Task("dev04", "shipping", "What is the total cost in USD (item price plus shipping) of 1 Lumen Monitor Arm shipped to the north region?",
+         lambda: _price("lumen monitor arm") + ship("north", _weight("lumen monitor arm")), 3),
+    Task("dev05", "shipping", "How much does it cost in USD to ship 6 Aurora Desk Lamps to the south region?",
+         lambda: ship("south", _weight("aurora desk lamp", 6)), 3),
+    Task("dev06", "shipping", "One Nimbus Kettle is shipped to the region where its own warehouse is located. What is the shipping cost in USD?",
+         lambda: ship(wh(p("nimbus kettle")["warehouse"])["region"], _weight("nimbus kettle")), 3),
+    Task("dev07", "currency", "What is the price of 2 Atlas Backpacks in JPY?",
+         lambda: cc(_price("atlas backpack", 2), "USD", "JPY"), 3),
+    Task("dev08", "currency", "What is the cost in EUR of shipping 3 Zephyr Fans to the west region?",
+         lambda: cc(ship("west", _weight("zephyr fan", 3)), "USD", "EUR"), 4),
+    Task("dev09", "currency", "A customer pays 200 GBP for one Orion Chair. How much change do they get, in GBP?",
+         lambda: 200 - cc(_price("orion chair"), "USD", "GBP"), 3),
+    Task("dev10", "mixed", "A silver-tier customer buys 3 Nimbus Kettles. What do they pay in USD after their tier discount?",
+         lambda: _price("nimbus kettle", 3) * (1 - disc("silver")), 3),
+    Task("dev11", "mixed", "All Lumen Monitor Arms in stock are stored from 2025-03-01 to 2025-03-11 at their warehouse's per-unit daily storage fee. What is the total storage cost in USD?",
+         lambda: p("lumen monitor arm")["stock"] * days("2025-03-01", "2025-03-11") * _fee("lumen monitor arm"), 4),
+    Task("dev12", "mixed", "A gold-tier customer buys 2 Vega Headphones shipped to the east region. The discount applies to items only. What is the total in USD?",
+         lambda: _price("vega headphones", 2) * (1 - disc("gold")) + ship("east", _weight("vega headphones", 2)), 5),
+]
+
 _FINAL = re.compile(r"final answer\s*[:=]\s*(.+)", re.IGNORECASE)
 _NUM = re.compile(r"-?\d[\d,]*(?:\.\d+)?|-?\.\d+")
 

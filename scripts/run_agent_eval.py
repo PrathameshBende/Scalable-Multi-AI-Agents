@@ -19,7 +19,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scalable_agents.metrics import wilson_interval  # noqa: E402
-from scalable_agents.tasks import TASKS, grade  # noqa: E402
+from scalable_agents.tasks import DEV_TASKS, TASKS, grade  # noqa: E402
 
 
 def main() -> None:
@@ -27,6 +27,9 @@ def main() -> None:
     ap.add_argument("--model", default="qwen2.5:7b")
     ap.add_argument("--max-steps", type=int, default=10, help="max agent->tools loops")
     ap.add_argument("--repeats", type=int, default=1, help="run every task this many times")
+    ap.add_argument("--split", default="test", choices=["dev", "test"],
+                    help="'dev' (12 tasks) for trying changes; 'test' (30 tasks) for the reported number")
+    ap.add_argument("--show-failures", action="store_true", help="print the full reply of failed tasks")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -36,10 +39,11 @@ def main() -> None:
     from scalable_agents.agent import build_react_agent, count_tool_calls, store_tools
     from scalable_agents.models import environment_info, ollama_chat_model
 
+    tasks = TASKS if args.split == "test" else DEV_TASKS
     agent = build_react_agent(ollama_chat_model(args.model), store_tools())
     records = []
     for rep in range(args.repeats):
-        for task in TASKS:
+        for task in tasks:
             t0 = time.time()
             error = None
             try:
@@ -66,7 +70,9 @@ def main() -> None:
             records.append(rec)
             mark = "PASS" if g["strict"] else "fail"
             print(f"[{mark}] {task.id} expected={g['expected']:.4g} got={g['parsed']} "
-                  f"tools={rec['tool_calls']} {rec['seconds']}s {error or ''}")
+                  f"tools={rec['tool_calls']} {rec['seconds']}s {error or ''}", flush=True)
+            if args.show_failures and not g["strict"]:
+                print(f"    tools used: {tools_used}\n    reply: {reply[-400:]!r}", flush=True)
 
     n = len(records)
     strict = sum(r["strict"] for r in records)
@@ -78,7 +84,7 @@ def main() -> None:
         by_cat[r["category"]][1] += 1
     lo, hi = wilson_interval(strict, n)
     summary = {
-        "n_runs": n, "n_tasks": len(TASKS), "repeats": args.repeats,
+        "n_runs": n, "n_tasks": len(tasks), "split": args.split, "repeats": args.repeats,
         "strict_success": strict / n, "strict_success_count": strict,
         "strict_95ci": [lo, hi], "lenient_success": lenient / n,
         "by_category": {c: {"pass": p, "n": t, "rate": p / t} for c, (p, t) in by_cat.items()},
@@ -88,7 +94,8 @@ def main() -> None:
         "runs_crashed_or_step_limit": sum(1 for r in records if r["error"]),
         "mean_seconds": sum(r["seconds"] for r in records) / n,
     }
-    out_path = args.out or f"results/agent_{args.model.replace(':', '_').replace('/', '_')}.json"
+    suffix = "" if args.split == "test" else "_dev"
+    out_path = args.out or f"results/agent_{args.model.replace(':', '_').replace('/', '_')}{suffix}.json"
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump({"experiment": "react_agent", "model": args.model, "max_steps": args.max_steps,

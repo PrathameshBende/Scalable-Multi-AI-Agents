@@ -40,6 +40,13 @@ def test_thirty_unique_multistep_tasks():
     assert all(math.isfinite(t.expected) for t in TASKS)
 
 
+def test_dev_set_is_separate_from_test_set():
+    from scalable_agents.tasks import DEV_TASKS
+
+    assert len(DEV_TASKS) == 12 and all(math.isfinite(t.expected) for t in DEV_TASKS)
+    assert not {t.question for t in DEV_TASKS} & {t.question for t in TASKS}
+
+
 # Expected answers worked out by hand from the data tables, as a cross-check.
 HAND = {
     "A01": 103.5, "A07": 17, "A08": 37.163, "B03": 133.7, "B05": 3.3, "B06": 157.48,
