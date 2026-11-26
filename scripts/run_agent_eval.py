@@ -25,7 +25,8 @@ from scalable_agents.tasks import DEV_TASKS, TASKS, grade  # noqa: E402
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="qwen2.5:7b")
-    ap.add_argument("--max-steps", type=int, default=10, help="max agent->tools loops")
+    ap.add_argument("--max-steps", type=int, default=12, help="max agent->tools loops")
+    ap.add_argument("--max-nudges", type=int, default=2, help="0 disables the retry nudge")
     ap.add_argument("--repeats", type=int, default=1, help="run every task this many times")
     ap.add_argument("--split", default="test", choices=["dev", "test"],
                     help="'dev' (12 tasks) for trying changes; 'test' (30 tasks) for the reported number")
@@ -40,7 +41,7 @@ def main() -> None:
     from scalable_agents.models import environment_info, ollama_chat_model
 
     tasks = TASKS if args.split == "test" else DEV_TASKS
-    agent = build_react_agent(ollama_chat_model(args.model), store_tools())
+    agent = build_react_agent(ollama_chat_model(args.model), store_tools(), max_nudges=args.max_nudges)
     records = []
     for rep in range(args.repeats):
         for task in tasks:
@@ -98,7 +99,7 @@ def main() -> None:
     out_path = args.out or f"results/agent_{args.model.replace(':', '_').replace('/', '_')}{suffix}.json"
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump({"experiment": "react_agent", "model": args.model, "max_steps": args.max_steps,
+        json.dump({"experiment": "react_agent", "model": args.model, "max_steps": args.max_steps, "max_nudges": args.max_nudges,
                    "summary": summary, "records": records, "env": environment_info()}, f, indent=2)
     print(f"\nstrict success {strict}/{n} = {100 * strict / n:.1f}% "
           f"(95% CI {100 * lo:.0f}-{100 * hi:.0f}%), lenient {100 * lenient / n:.1f}%")

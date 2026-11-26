@@ -8,6 +8,7 @@ parsing 'Thought/Action:' text, which is how ReAct is usually built today.
 Graph (same shape for both agents):
 
     START -> agent --(has tool calls?)--yes--> tools --> agent
+                     +--no, but no FINAL ANSWER yet--> nudge --> agent  (at most 2x)
                      +--no--> END
 
 ``build_react_agent`` is the generic loop; ``build_rag_agent`` is the rebuilt
@@ -20,7 +21,7 @@ import functools
 import json
 from typing import Annotated, Any, Callable, Sequence, TypedDict
 
-from langchain_core.messages import AIMessage, BaseMessage, SystemMessage, ToolMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import BaseTool, StructuredTool
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
@@ -95,8 +96,27 @@ def _jsonify(f: Callable[..., Any]) -> Callable[..., str]:
     return wrapped
 
 
-def build_react_agent(llm: Any, tools: Sequence[BaseTool], system_prompt: str = REACT_SYSTEM_PROMPT):
-    """Compile the agent graph. ``llm`` needs ``bind_tools`` and ``invoke`` (any LangChain chat model)."""
+NUDGE = ("You stopped without finishing. Continue: call the tools you still need, "
+         "then end with the line 'FINAL ANSWER: <number>'.")
+
+
+def has_final_answer(text: str) -> bool:
+    return "final answer" in (text or "").lower()
+
+
+def build_react_agent(
+    llm: Any,
+    tools: Sequence[BaseTool],
+    system_prompt: str = REACT_SYSTEM_PROMPT,
+    is_finished: Callable[[str], bool] | None = has_final_answer,
+    max_nudges: int = 2,
+):
+    """Compile the agent graph. ``llm`` needs ``bind_tools`` and ``invoke`` (any LangChain chat model).
+
+    If ``is_finished`` is given and the model stops (no tool call) with a reply that
+    fails it, a 'nudge' message sends it back to the agent node, at most ``max_nudges``
+    times. Small models sometimes stop mid-task with an empty reply; this recovers them.
+    """
     by_name = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(list(tools))
 
@@ -120,16 +140,27 @@ def build_react_agent(llm: Any, tools: Sequence[BaseTool], system_prompt: str = 
             results.append(ToolMessage(content=content, tool_call_id=call["id"], name=call["name"]))
         return {"messages": results}
 
+    def nudge_node(state: AgentState) -> dict:
+        return {"messages": [HumanMessage(content=NUDGE)]}
+
     def route(state: AgentState) -> str:
         last = state["messages"][-1]
-        return "tools" if isinstance(last, AIMessage) and last.tool_calls else END
+        if isinstance(last, AIMessage) and last.tool_calls:
+            return "tools"
+        if is_finished is not None and not is_finished(str(last.content)):
+            used = sum(1 for m in state["messages"] if isinstance(m, HumanMessage) and m.content == NUDGE)
+            if used < max_nudges:
+                return "nudge"
+        return END
 
     g = StateGraph(AgentState)
     g.add_node("agent", agent_node)
     g.add_node("tools", tools_node)
+    g.add_node("nudge", nudge_node)
     g.add_edge(START, "agent")
-    g.add_conditional_edges("agent", route, {"tools": "tools", END: END})
+    g.add_conditional_edges("agent", route, {"tools": "tools", "nudge": "nudge", END: END})
     g.add_edge("tools", "agent")
+    g.add_edge("nudge", "agent")
     return g.compile()
 
 
@@ -153,7 +184,7 @@ def retriever_tool(search: Callable[[str], list[tuple[str, str]]]) -> BaseTool:
 
 
 def build_rag_agent(llm: Any, search: Callable[[str], list[tuple[str, str]]]):
-    return build_react_agent(llm, [retriever_tool(search)], RAG_SYSTEM_PROMPT)
+    return build_react_agent(llm, [retriever_tool(search)], RAG_SYSTEM_PROMPT, is_finished=None)
 
 
 def count_tool_calls(messages: Sequence[BaseMessage]) -> int:

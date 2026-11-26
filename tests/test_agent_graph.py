@@ -93,3 +93,22 @@ def test_rag_agent_returns_cited_passages():
     msgs = agent.invoke({"messages": [HumanMessage(content="vitamin d?")]})["messages"]
     assert msgs[2].content.startswith("[d1] vitamin d")
     assert msgs[-1].content.endswith("[d1].")
+
+
+def test_nudge_recovers_an_agent_that_stops_early():
+    llm = ScriptedLLM([
+        AIMessage(content=""),  # stops with nothing
+        AIMessage(content="", tool_calls=[call("calculator", {"expression": "2*3"}, "c1")]),
+        AIMessage(content="FINAL ANSWER: 6"),
+    ])
+    msgs = build_react_agent(llm, store_tools()).invoke({"messages": [HumanMessage(content="q")]})["messages"]
+    assert msgs[-1].content == "FINAL ANSWER: 6"
+    assert sum(isinstance(m, HumanMessage) for m in msgs) == 2  # question + one nudge
+
+
+def test_nudges_are_capped():
+    llm = ScriptedLLM([AIMessage(content="dunno") for _ in range(5)])
+    msgs = build_react_agent(llm, store_tools(), max_nudges=2).invoke(
+        {"messages": [HumanMessage(content="q")]})["messages"]
+    assert len(llm.replies) == 2  # 1 first try + 2 nudged tries used
+    assert msgs[-1].content == "dunno"
