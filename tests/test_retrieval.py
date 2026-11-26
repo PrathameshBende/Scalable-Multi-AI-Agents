@@ -56,7 +56,7 @@ def test_hyde_uses_generated_passage(indexes):
     ranked = r.search("osteoporosis skeleton", 2, "hyde")
     assert set(ranked) == {"d1", "d4"}
     assert prompts == [HYDE_PROMPT.format(query="osteoporosis skeleton")]
-    assert "hyde_passage" in r.last_trace
+    assert r.last_trace["hyde_passages"] == ["vitamin d and calcium strengthen bone density"]
 
 
 def test_rag_fusion_merges_rephrasings(indexes):
@@ -80,3 +80,25 @@ def test_hybrid_and_errors(indexes):
         r.search("x", 1, "nope")
     with pytest.raises(ValueError):
         Retriever(dense).search("x", 1, "hybrid")
+
+
+def test_hyde_multiple_samples_passes_sample_index(indexes):
+    dense, bm25 = indexes
+    calls = []
+
+    def gen(prompt, sample=0):
+        calls.append(sample)
+        return ["vitamin d bone density", "calcium fracture risk", "vitamin d calcium"][sample]
+
+    r = Retriever(dense, bm25, gen, hyde_samples=3)
+    assert set(r.search("osteoporosis skeleton", 2, "hyde")) == {"d1", "d4"}
+    assert calls == [0, 1, 2] and len(r.last_trace["hyde_passages"]) == 3
+
+
+def test_hybrid_variants_combine_llm_and_bm25(indexes):
+    dense, bm25 = indexes
+    r = Retriever(dense, bm25, lambda p: "statins cholesterol", n_queries=1)
+    assert r.search("heart attack", 1, "hyde_hybrid") == ["d2"]
+    assert r.search("heart attack", 1, "fusion_hybrid") == ["d2"]
+    with pytest.raises(ValueError):
+        Retriever(dense, None, lambda p: "x").search("q", 1, "hyde_hybrid")

@@ -13,6 +13,8 @@ Strategies compared in ``scripts/run_retrieval_eval.py``:
 | hyde        | LLM writes a fake answer passage; search with its embedding     | 1         |
 | rag_fusion  | LLM writes n rephrasings; search each; merge with RRF           | 1         |
 | hybrid      | dense + bm25 merged with RRF                                    | 0         |
+| hyde_hybrid | HyDE ranking + bm25 ranking merged with RRF                     | 1         |
+| fusion_hybrid | each rephrasing searched with dense AND bm25; all merged by RRF | 1       |
 """
 
 from __future__ import annotations
@@ -112,7 +114,7 @@ class BM25Index:
 class Retriever:
     """Runs one of the strategies listed in the module docstring."""
 
-    STRATEGIES = ("bm25", "dense", "hyde", "rag_fusion", "hybrid")
+    STRATEGIES = ("bm25", "dense", "hyde", "rag_fusion", "hybrid", "hyde_hybrid", "fusion_hybrid")
 
     def __init__(
         self,
@@ -122,6 +124,7 @@ class Retriever:
         n_queries: int = 3,
         fusion_depth: int = 100,
         rrf_k: int = 60,
+        hyde_samples: int = 1,
     ):
         self.dense = dense
         self.bm25 = bm25
@@ -129,22 +132,50 @@ class Retriever:
         self.n_queries = n_queries
         self.fusion_depth = fusion_depth
         self.rrf_k = rrf_k
+        self.hyde_samples = hyde_samples
         self.last_trace: dict = {}
 
     # --- individual strategies -------------------------------------------
-    def hyde(self, query: str, k: int) -> list[str]:
-        passage = self._gen(HYDE_PROMPT.format(query=query))
+    def _hyde_vector(self, query: str) -> np.ndarray:
+        prompt = HYDE_PROMPT.format(query=query)
+        if self.hyde_samples == 1:
+            passages = [self._gen(prompt)]
+        else:  # extra samples are drawn with temperature > 0 (see CachedGenerator)
+            passages = [self.generate(prompt, sample=i) for i in range(self.hyde_samples)]
         # As in the HyDE paper, the query's own embedding is averaged in with the
-        # hypothetical document, which guards against a bad generation.
-        vecs = _normalize(self.dense.embed([query, passage]))
-        self.last_trace = {"hyde_passage": passage}
-        return self.dense.search_vector(vecs.mean(axis=0), k)
+        # hypothetical documents, which guards against a bad generation.
+        vecs = _normalize(self.dense.embed([query, *passages]))
+        self.last_trace = {"hyde_passages": passages}
+        return vecs.mean(axis=0)
 
-    def rag_fusion(self, query: str, k: int) -> list[str]:
+    def hyde(self, query: str, k: int) -> list[str]:
+        return self.dense.search_vector(self._hyde_vector(query), k)
+
+    def hyde_hybrid(self, query: str, k: int) -> list[str]:
+        """HyDE dense ranking fused (RRF) with BM25 on the original query."""
+        if self.bm25 is None:
+            raise ValueError("hyde_hybrid needs a BM25 index")
+        rankings = [self.dense.search_vector(self._hyde_vector(query), self.fusion_depth),
+                    self.bm25.search(query, self.fusion_depth)]
+        return reciprocal_rank_fusion(rankings, k=self.rrf_k, top_n=k)
+
+    def _multi_queries(self, query: str) -> list[str]:
         reply = self._gen(MULTI_QUERY_PROMPT.format(query=query, n=self.n_queries))
         queries = [query] + parse_query_list(reply, self.n_queries)
-        rankings = [self.dense.search(q, self.fusion_depth) for q in queries]
         self.last_trace = {"queries": queries}
+        return queries
+
+    def rag_fusion(self, query: str, k: int) -> list[str]:
+        rankings = [self.dense.search(q, self.fusion_depth) for q in self._multi_queries(query)]
+        return reciprocal_rank_fusion(rankings, k=self.rrf_k, top_n=k)
+
+    def fusion_hybrid(self, query: str, k: int) -> list[str]:
+        """RAG-Fusion where every rephrasing is searched with both dense and BM25."""
+        if self.bm25 is None:
+            raise ValueError("fusion_hybrid needs a BM25 index")
+        rankings = []
+        for q in self._multi_queries(query):
+            rankings += [self.dense.search(q, self.fusion_depth), self.bm25.search(q, self.fusion_depth)]
         return reciprocal_rank_fusion(rankings, k=self.rrf_k, top_n=k)
 
     def hybrid(self, query: str, k: int) -> list[str]:
@@ -171,6 +202,10 @@ class Retriever:
             return self.rag_fusion(query, k)
         if strategy == "hybrid":
             return self.hybrid(query, k)
+        if strategy == "hyde_hybrid":
+            return self.hyde_hybrid(query, k)
+        if strategy == "fusion_hybrid":
+            return self.fusion_hybrid(query, k)
         raise ValueError(f"unknown strategy {strategy!r}; choose from {self.STRATEGIES}")
 
     def _gen(self, prompt: str) -> str:

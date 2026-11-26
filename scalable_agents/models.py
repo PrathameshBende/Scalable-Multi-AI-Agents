@@ -28,10 +28,10 @@ def sentence_transformer_embedder(
     return embed
 
 
-def ollama_chat_model(model: str, temperature: float = 0.0, num_ctx: int = 4096):
+def ollama_chat_model(model: str, temperature: float = 0.0, num_ctx: int = 4096, seed: int = 0):
     from langchain_ollama import ChatOllama
 
-    return ChatOllama(model=model, temperature=temperature, num_ctx=num_ctx, seed=0)
+    return ChatOllama(model=model, temperature=temperature, num_ctx=num_ctx, seed=seed)
 
 
 class CachedGenerator:
@@ -41,10 +41,12 @@ class CachedGenerator:
     Keyed on (model, prompt) so a model change never reuses old generations.
     """
 
-    def __init__(self, model: str, cache_path: str, temperature: float = 0.0):
+    def __init__(self, model: str, cache_path: str, temperature: float = 0.0,
+                 sample_temperature: float = 0.7):
         self.model = model
         self.cache_path = cache_path
         self._llm = ollama_chat_model(model, temperature=temperature)
+        self._sample_temperature = sample_temperature
         self._lock = threading.Lock()
         self._cache: dict[str, str] = {}
         self.calls = 0
@@ -54,14 +56,21 @@ class CachedGenerator:
                     row = json.loads(line)
                     self._cache[row["key"]] = row["output"]
 
-    def _key(self, prompt: str) -> str:
-        return hashlib.sha256(f"{self.model}\n{prompt}".encode()).hexdigest()
+    def _key(self, prompt: str, sample: int = 0) -> str:
+        # sample 0 keeps the original key, so earlier cached generations stay valid.
+        tag = "" if sample == 0 else f"\n#sample={sample}@T{self._sample_temperature}"
+        return hashlib.sha256(f"{self.model}\n{prompt}{tag}".encode()).hexdigest()
 
-    def __call__(self, prompt: str) -> str:
-        key = self._key(prompt)
+    def __call__(self, prompt: str, sample: int = 0) -> str:
+        """sample=0 is the greedy (temperature 0) answer; sample>=1 are seeded random samples."""
+        key = self._key(prompt, sample)
         if key in self._cache:
             return self._cache[key]
-        out = self._llm.invoke(prompt).content.strip()
+        if sample == 0:
+            out = self._llm.invoke(prompt).content.strip()
+        else:
+            llm = ollama_chat_model(self.model, temperature=self._sample_temperature, seed=sample)
+            out = llm.invoke(prompt).content.strip()
         with self._lock:
             self.calls += 1
             self._cache[key] = out

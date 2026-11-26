@@ -38,10 +38,15 @@ def main() -> None:
     ap.add_argument("--llm", default="qwen2.5:3b")
     ap.add_argument("--strategies", default="bm25,dense,hyde,rag_fusion,hybrid")
     ap.add_argument("--n-queries", type=int, default=3, help="rephrasings for rag_fusion")
+    ap.add_argument("--hyde-samples", type=int, default=1, help="hypothetical passages per query")
+    ap.add_argument("--rrf-k", type=int, default=60)
+    ap.add_argument("--fusion-depth", type=int, default=100)
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--limit", type=int, default=0, help="only the first N queries (0 = all)")
     ap.add_argument("--workers", type=int, default=4, help="parallel LLM requests")
-    ap.add_argument("--out", default="results/retrieval.json")
+    ap.add_argument("--out", default=None,
+                    help="default: results/retrieval.json (test) or results/tuning/retrieval_train_<tag>.json")
+    ap.add_argument("--tag", default="run", help="name for a tuning run on the train split")
     args = ap.parse_args()
 
     from scalable_agents.models import CachedGenerator, environment_info, sentence_transformer_embedder
@@ -61,7 +66,8 @@ def main() -> None:
     bm25 = BM25Index().build(doc_ids, [data.corpus[d] for d in doc_ids])
 
     strategies = args.strategies.split(",")
-    needs_llm = any(s in ("hyde", "rag_fusion") for s in strategies)
+    llm_strategies = ("hyde", "rag_fusion", "hyde_hybrid", "fusion_hybrid")
+    needs_llm = any(s in llm_strategies for s in strategies)
     gen = CachedGenerator(args.llm, f"results/cache/{args.llm.replace(':', '_')}.jsonl") if needs_llm else None
 
     runs: dict[str, dict[str, list[str]]] = {}
@@ -70,12 +76,13 @@ def main() -> None:
     for strat in strategies:
         def one(q: str, strat=strat):
             # A fresh Retriever per query keeps last_trace thread-safe; indexes are shared.
-            r = Retriever(dense, bm25, gen, n_queries=args.n_queries)
+            r = Retriever(dense, bm25, gen, n_queries=args.n_queries, fusion_depth=args.fusion_depth,
+                          rrf_k=args.rrf_k, hyde_samples=args.hyde_samples)
             ranked = r.search(data.queries[q], args.k, strat)
             return q, ranked, r.last_trace
 
         t0 = time.time()
-        workers = args.workers if strat in ("hyde", "rag_fusion") else 1
+        workers = args.workers if strat in llm_strategies else 1
         with ThreadPoolExecutor(max_workers=workers) as pool:
             results = list(pool.map(one, qids))
         timing[strat] = (time.time() - t0) / len(qids)
@@ -83,7 +90,7 @@ def main() -> None:
         q0, _, trace0 = results[0]
         examples[strat] = {"query": data.queries[q0], "top3": runs[strat][q0][:3],
                            "relevant": sorted(qrels[q0]), **trace0}
-        print(f"{strat:>10}: done ({timing[strat]:.2f}s/query)")
+        print(f"{strat:>13}: done ({timing[strat]:.2f}s/query)", flush=True)
 
     metrics = {s: evaluate_run(runs[s], qrels) for s in strategies}
     base = metrics.get("dense")
@@ -111,21 +118,26 @@ def main() -> None:
         "dataset": args.dataset, "split": args.split, "n_docs": len(data.corpus), "n_queries": len(qids),
         "embedder": args.embedder, "llm": args.llm if needs_llm else None,
         "baseline": "dense", "primary_metric": PRIMARY, "k": args.k,
+        "settings": {"n_queries": args.n_queries, "hyde_samples": args.hyde_samples,
+                     "rrf_k": args.rrf_k, "fusion_depth": args.fusion_depth},
         "index_build_seconds": index_seconds,
         "metrics": metrics, "vs_baseline": comparison,
         "seconds_per_query": timing, "llm_calls_made": gen.calls if gen else 0,
         "examples": examples, "env": environment_info(),
     }
+    if args.out is None:
+        args.out = ("results/retrieval.json" if args.split == "test"
+                    else f"results/tuning/retrieval_{args.split}_{args.tag}.json")
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
 
-    print(f"\n{'strategy':>10} {'hit@1':>7} {'hit@5':>7} {'hit@10':>7} {'ndcg@10':>8} {'mrr@10':>7}")
+    print(f"\n{'strategy':>13} {'hit@1':>7} {'hit@5':>7} {'hit@10':>7} {'ndcg@10':>8} {'mrr@10':>7}")
     for s in strategies:
         m = metrics[s]
-        print(f"{s:>10} {m['hit@1']:7.3f} {m['hit@5']:7.3f} {m['hit@10']:7.3f} {m['ndcg@10']:8.3f} {m['mrr@10']:7.3f}")
+        print(f"{s:>13} {m['hit@1']:7.3f} {m['hit@5']:7.3f} {m['hit@10']:7.3f} {m['ndcg@10']:8.3f} {m['mrr@10']:7.3f}")
     for s, c in comparison.items():
-        print(f"{s:>10} vs dense: hit@5 {c['hit@5_abs_points']:+.1f} pts ({c['hit@5_rel_pct']:+.1f}%), "
+        print(f"{s:>13} vs dense: hit@5 {c['hit@5_abs_points']:+.1f} pts ({c['hit@5_rel_pct']:+.1f}%), "
               f"won {c['queries_won_vs_baseline']} lost {c['queries_lost_vs_baseline']}, p={c['mcnemar_p_hit@5']:.3f}")
     print(f"\nwrote {args.out}")
 
