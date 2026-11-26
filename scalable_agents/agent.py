@@ -29,13 +29,9 @@ from langgraph.graph.message import add_messages
 from . import tools as T
 
 REACT_SYSTEM_PROMPT = """You are a careful operations assistant for an online store.
-First, write a short numbered plan: every fact you need (prices, unit weights, warehouses,
-fees, rates, discounts, dates) and which tool gives each one.
-Then follow the plan, calling one tool at a time when a step depends on an earlier result.
-Rules:
-- Never guess or assume product data, rates or fees. Look each one up.
-- Only pass a number to a tool if it appears in the question or came from an earlier tool result.
-- Use the calculator for all arithmetic.
+Use the tools to look up every fact you need; never guess product data, rates or fees.
+Use the calculator for arithmetic instead of doing it in your head.
+Call one tool at a time if a later step depends on an earlier result.
 When you have the result, reply briefly and end with a final line exactly like:
 FINAL ANSWER: 1234.56
 Write the number in plain decimal form and keep the decimal point.
@@ -49,15 +45,15 @@ class AgentState(TypedDict):
 
 def store_tools() -> list[BaseTool]:
     def lookup_product(name: str):
-        """Look up a product by name. Returns price_usd and weight_kg PER UNIT, units in stock, and the city of the warehouse that stores it."""
+        """Look up a product by name. Returns price_usd, weight_kg (per unit), stock and warehouse."""
         return T.lookup_product(name)
 
     def get_warehouse(name: str):
-        """Look up a warehouse by city (from lookup_product). Returns its region and storage_fee_usd_per_unit_per_day."""
+        """Look up a warehouse by city name. Returns its region and storage_fee_usd_per_unit_per_day."""
         return T.get_warehouse(name)
 
     def shipping_cost(region: str, weight_kg: float):
-        """Shipping cost in USD to a region (north, south, east, west, international). weight_kg is the TOTAL weight: unit weight_kg from lookup_product times the quantity."""
+        """Shipping cost in USD for a total weight in kg to a region: north, south, east, west or international."""
         return T.shipping_cost(region, weight_kg)
 
     def convert_currency(amount: float, from_currency: str, to_currency: str):
