@@ -1,0 +1,10 @@
+# Experiments (Colab; torch, transformers, datasets, huggingface_hub come preinstalled there)
+langgraph>=0.6
+langchain-core>=0.3
+langchain-ollama>=0.3
+sentence-transformers>=3.0
+rank-bm25>=0.2.2
+onnx>=1.16
+onnxruntime>=1.18
+numpy>=1.26
+pytest>=8
