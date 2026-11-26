@@ -21,8 +21,9 @@ def up() -> bool:
 
 
 if not up():
-    subprocess.Popen(["ollama", "serve"], stdout=open("/content/ollama.log", "a"),
-                     stderr=subprocess.STDOUT, start_new_session=True)
+    subprocess.Popen(["ollama", "serve"], stdin=subprocess.DEVNULL,
+                     stdout=open("/content/ollama.log", "a"), stderr=subprocess.STDOUT,
+                     start_new_session=True)
     for _ in range(60):
         if up():
             break
