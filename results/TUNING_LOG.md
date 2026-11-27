@@ -77,6 +77,36 @@ embedding; RAG-Fusion: 3 rephrasings + original, RRF k=60, depth 100.
 | 1 | All 7 strategies with default settings | train (200 queries) | dense hit@5 0.765; HyDE 0.800 (+3.5 pts, p=0.04); best nDCG@10: fusion_hybrid 0.712 vs 0.675 | - |
 | 2 | Final run, all strategies, default settings (no further tuning was done) | test (300) | dense 0.753 / 0.645; hyde_hybrid **0.780 / 0.694** (hit@5 / nDCG@10): +2.7 pts (+3.5%) hit@5, p=0.24; **+7.6% nDCG@10** | reported |
 
+### Round 2 (cross-encoder reranking), protocol written before any reranking run
+
+Motivation: round 1 reached +2.7 pts hit@5 / +7.6% nDCG@10 over dense. HyDE and fusion
+mostly reorder documents near the top; a cross-encoder reads query and document together
+and can also pull a relevant document up from rank 20-100 into the top 5.
+
+Change under test: `<base>+rerank@N` re-sorts the base strategy's top N by a CrossEncoder
+score for (original query, document). Code: `Retriever.reranked`, `CrossEncoderReranker`.
+
+Selection on SciFact **train** (first 200 queries, as in round 1), `scripts/select_rerank.py`:
+- grid: base {dense, hybrid, hyde_hybrid, fusion_hybrid} x depth {20, 50, 100} x reranker
+  {cross-encoder/ms-marco-MiniLM-L-6-v2, BAAI/bge-reranker-base}: 24 configs
+- rule: highest hit@5 (the pre-declared primary metric); ties -> nDCG@10, smaller depth,
+  smaller reranker, cheaper base
+- baseline unchanged: dense all-MiniLM-L6-v2. HyDE / fusion settings unchanged from round 1.
+
+Final, each run once (`scripts/run_rerank.sh`):
+- SciFact test (300 q). This is the **second** look at this test set (round 1 was the
+  first); reported as such.
+- NFCorpus test (323 q, nutrition/medical questions), never used before: a clean held-out
+  check. HyDE prompt for questions ("scientific paper passage to answer the question",
+  following the HyDE paper's prompts for question datasets), fixed before running. The
+  RAG-Fusion prompt is reused unchanged (it says "claim").
+
+| # | Run | Data | Result | Kept? |
+|---|---|---|---|---|
+| RR-1 | 24 reranking configs | SciFact train (200) | (pending) | |
+| RR-2 | chosen config vs dense | SciFact test (300), 2nd look | (pending) | |
+| RR-3 | chosen config vs dense | NFCorpus test (323), held out | (pending) | |
+
 ## Compression
 
 | # | Run | Result |

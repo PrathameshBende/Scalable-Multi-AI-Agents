@@ -24,7 +24,7 @@ scalable_agents/
   compress.py    ONNX export / int8 quantization / ONNX embedder; llama.cpp output parsers
   data.py        BEIR SciFact loader
 scripts/         one script per experiment; each writes results/<name>.json
-tests/           59 unit tests, no models needed (fake LLM, fake embedder)
+tests/           62 unit tests, no models needed (fake LLM, fake embedder)
 notebooks/colab_run_all.ipynb   runs everything on a free Colab T4
 legacy/          the original 2025 notebook (outputs removed)
 ```

@@ -102,3 +102,42 @@ def test_hybrid_variants_combine_llm_and_bm25(indexes):
     assert r.search("heart attack", 1, "fusion_hybrid") == ["d2"]
     with pytest.raises(ValueError):
         Retriever(dense, None, lambda p: "x").search("q", 1, "hyde_hybrid")
+
+
+def test_rerank_reorders_base_candidates(indexes):
+    dense, bm25 = indexes
+    seen = []
+
+    def fake_reranker(query, texts):
+        # Pretends to understand that "aspirin" docs matter most for this query.
+        seen.append(len(texts))
+        return [10.0 if "aspirin" in t else (1.0 if "statins" in t else 0.0) for t in texts]
+
+    r = Retriever(dense, bm25, rerank=fake_reranker, doc_text=DOCS)
+    base = r.search("heart attack risk", 5, "dense")
+    out = r.search("heart attack risk", 2, "dense+rerank@5")
+    assert out == ["d5", "d2"] and seen == [5]
+    # Only the top-N candidates are re-scored: with depth 1 the reranker sees one doc.
+    assert r.search("heart attack risk", 3, "dense+rerank@1") == base[:1] and seen[-1] == 1
+    assert r.last_trace["rerank_depth"] == 1
+
+
+def test_rerank_ties_keep_base_order_and_needs_reranker(indexes):
+    dense, bm25 = indexes
+    r = Retriever(dense, bm25, rerank=lambda q, ts: [0.0] * len(ts), doc_text=DOCS)
+    assert r.search("vitamin d", 3, "hybrid+rerank@3") == r.search("vitamin d", 3, "hybrid")
+    with pytest.raises(ValueError):
+        Retriever(dense, bm25).search("x", 1, "dense+rerank@5")
+    with pytest.raises(ValueError):
+        Retriever(dense, bm25, rerank=lambda q, ts: [1.0], doc_text=DOCS).search("vitamin d", 2, "dense+rerank@3")
+
+
+def test_question_hyde_prompt(indexes):
+    from scalable_agents.retrieval import HYDE_PROMPT_QUESTION
+
+    dense, bm25 = indexes
+    prompts = []
+    r = Retriever(dense, bm25, lambda p: prompts.append(p) or "bone density", hyde_prompt=HYDE_PROMPT_QUESTION)
+    r.search("is milk good for bones?", 1, "hyde")
+    assert prompts == ["Please write a scientific paper passage to answer the question.\n"
+                       "Question: is milk good for bones?\nPassage:"]

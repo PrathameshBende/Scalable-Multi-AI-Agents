@@ -83,6 +83,36 @@ class CachedGenerator:
         return out
 
 
+class CrossEncoderReranker:
+    """(query, [doc texts]) -> relevance scores from a sentence-transformers CrossEncoder.
+
+    Scores are cached in memory per (query, doc text), so re-scoring the same candidates
+    at a smaller depth, or for another base strategy that found the same docs, is free.
+    """
+
+    def __init__(self, name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2", batch_size: int = 64,
+                 max_length: int = 512):
+        from sentence_transformers import CrossEncoder
+
+        self.name = name
+        self.model = CrossEncoder(name, max_length=max_length)
+        self.batch_size = batch_size
+        self._cache: dict[tuple[str, str], float] = {}
+        self._lock = threading.Lock()
+        self.pairs_scored = 0
+
+    def __call__(self, query: str, texts: list[str]) -> list[float]:
+        missing = [t for t in dict.fromkeys(texts) if (query, t) not in self._cache]
+        if missing:
+            scores = self.model.predict([(query, t) for t in missing], batch_size=self.batch_size,
+                                        show_progress_bar=False)
+            with self._lock:
+                for t, s in zip(missing, scores):
+                    self._cache[(query, t)] = float(s)
+                self.pairs_scored += len(missing)
+        return [self._cache[(query, t)] for t in texts]
+
+
 def environment_info() -> dict:
     """Library versions and hardware, saved with every result for reproducibility."""
     import platform

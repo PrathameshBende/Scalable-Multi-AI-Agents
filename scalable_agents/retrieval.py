@@ -15,6 +15,12 @@ Strategies compared in ``scripts/run_retrieval_eval.py``:
 | hybrid      | dense + bm25 merged with RRF                                    | 0         |
 | hyde_hybrid | HyDE ranking + bm25 ranking merged with RRF                     | 1         |
 | fusion_hybrid | each rephrasing searched with dense AND bm25; all merged by RRF | 1       |
+
+Any strategy can be followed by a cross-encoder reranking step: ``"<base>+rerank@N"``
+takes the base strategy's top N and re-sorts them by a reranker score for
+(original query, document text). A cross-encoder reads query and document together,
+so it judges relevance better than comparing two separately computed embeddings,
+but it costs one model call per (query, doc) pair, so it only sees the top N.
 """
 
 from __future__ import annotations
@@ -28,12 +34,21 @@ from .fusion import parse_query_list, reciprocal_rank_fusion
 
 Embedder = Callable[[list[str]], np.ndarray]
 Generator = Callable[[str], str]
+# (query, [doc texts]) -> one relevance score per doc, higher = more relevant.
+Reranker = Callable[[str, list[str]], Sequence[float]]
 
 # HyDE prompt for SciFact, taken from the HyDE paper's released prompts
 # (Gao et al., 2022, "Precise Zero-Shot Dense Retrieval without Relevance Labels").
 HYDE_PROMPT = (
     "Please write a scientific paper passage to support/refute the claim.\n"
     "Claim: {query}\nPassage:"
+)
+
+# For question-style datasets (e.g. NFCorpus), following the HyDE paper's prompts for
+# question datasets such as TREC-COVID. Fixed before any NFCorpus run.
+HYDE_PROMPT_QUESTION = (
+    "Please write a scientific paper passage to answer the question.\n"
+    "Question: {query}\nPassage:"
 )
 
 MULTI_QUERY_PROMPT = (
@@ -125,6 +140,9 @@ class Retriever:
         fusion_depth: int = 100,
         rrf_k: int = 60,
         hyde_samples: int = 1,
+        rerank: Reranker | None = None,
+        doc_text: dict[str, str] | None = None,
+        hyde_prompt: str = HYDE_PROMPT,
     ):
         self.dense = dense
         self.bm25 = bm25
@@ -133,11 +151,14 @@ class Retriever:
         self.fusion_depth = fusion_depth
         self.rrf_k = rrf_k
         self.hyde_samples = hyde_samples
+        self.rerank = rerank
+        self.doc_text = doc_text
+        self.hyde_prompt = hyde_prompt
         self.last_trace: dict = {}
 
     # --- individual strategies -------------------------------------------
     def _hyde_vector(self, query: str) -> np.ndarray:
-        prompt = HYDE_PROMPT.format(query=query)
+        prompt = self.hyde_prompt.format(query=query)
         if self.hyde_samples == 1:
             passages = [self._gen(prompt)]
         else:  # extra samples are drawn with temperature > 0 (see CachedGenerator)
@@ -188,8 +209,24 @@ class Retriever:
         self.last_trace = {}
         return reciprocal_rank_fusion(rankings, k=self.rrf_k, top_n=k)
 
+    def reranked(self, query: str, k: int, base: str, depth: int) -> list[str]:
+        """Top ``depth`` of ``base``, re-sorted by the reranker; ties keep the base order."""
+        if self.rerank is None or self.doc_text is None:
+            raise ValueError("reranking needs a reranker and doc_text")
+        candidates = self.search(query, depth, base)
+        trace = self.last_trace
+        scores = list(self.rerank(query, [self.doc_text[d] for d in candidates]))
+        if len(scores) != len(candidates):
+            raise ValueError("reranker returned the wrong number of scores")
+        order = sorted(range(len(candidates)), key=lambda i: (-scores[i], i))
+        self.last_trace = {**trace, "rerank_depth": depth}
+        return [candidates[i] for i in order[:k]]
+
     def search(self, query: str, k: int = 10, strategy: str = "dense") -> list[str]:
         self.last_trace = {}
+        if "+rerank@" in strategy:
+            base, depth = strategy.split("+rerank@")
+            return self.reranked(query, k, base, int(depth))
         if strategy == "dense":
             return self.dense.search(query, k)
         if strategy == "bm25":

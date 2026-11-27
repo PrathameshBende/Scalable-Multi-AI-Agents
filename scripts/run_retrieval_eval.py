@@ -9,6 +9,8 @@ Significance: exact McNemar test on per-query hit@5 vs the baseline.
 Usage (Colab, after Ollama is serving the model):
   python scripts/run_retrieval_eval.py --llm qwen2.5:3b
   python scripts/run_retrieval_eval.py --limit 20      # quick smoke test
+  python scripts/run_retrieval_eval.py --strategies dense,hyde_hybrid,hyde_hybrid+rerank@50 \
+      --reranker cross-encoder/ms-marco-MiniLM-L-6-v2  # cross-encoder on the top 50
 """
 
 from __future__ import annotations
@@ -24,7 +26,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scalable_agents.data import download_beir, load_beir  # noqa: E402
 from scalable_agents.metrics import evaluate_run, mcnemar_exact, per_query_hits  # noqa: E402
-from scalable_agents.retrieval import BM25Index, DenseIndex, Retriever  # noqa: E402
+from scalable_agents.retrieval import (  # noqa: E402
+    HYDE_PROMPT, HYDE_PROMPT_QUESTION, BM25Index, DenseIndex, Retriever,
+)
 
 PRIMARY = "hit@5"
 
@@ -47,9 +51,15 @@ def main() -> None:
     ap.add_argument("--out", default=None,
                     help="default: results/retrieval.json (test) or results/tuning/retrieval_train_<tag>.json")
     ap.add_argument("--tag", default="run", help="name for a tuning run on the train split")
+    ap.add_argument("--reranker", default=None,
+                    help="CrossEncoder model name; needed for strategies written '<base>+rerank@N'")
+    ap.add_argument("--hyde-prompt", default="claim", choices=["claim", "question"],
+                    help="'claim' = HyDE paper's SciFact prompt; 'question' = for question datasets (NFCorpus)")
     args = ap.parse_args()
 
-    from scalable_agents.models import CachedGenerator, environment_info, sentence_transformer_embedder
+    from scalable_agents.models import (
+        CachedGenerator, CrossEncoderReranker, environment_info, sentence_transformer_embedder,
+    )
 
     data = load_beir(download_beir(args.dataset, "data"), split=args.split)
     qids = sorted(data.queries, key=lambda q: int(q) if q.isdigit() else q)
@@ -67,7 +77,13 @@ def main() -> None:
 
     strategies = args.strategies.split(",")
     llm_strategies = ("hyde", "rag_fusion", "hyde_hybrid", "fusion_hybrid")
-    needs_llm = any(s in llm_strategies for s in strategies)
+    needs_llm = any(s.split("+rerank@")[0] in llm_strategies for s in strategies)
+    reranker = None
+    if any("+rerank@" in s for s in strategies):
+        if not args.reranker:
+            ap.error("strategies with '+rerank@N' need --reranker")
+        reranker = CrossEncoderReranker(args.reranker)
+    hyde_prompt = HYDE_PROMPT if args.hyde_prompt == "claim" else HYDE_PROMPT_QUESTION
     gen = CachedGenerator(args.llm, f"results/cache/{args.llm.replace(':', '_')}.jsonl") if needs_llm else None
 
     runs: dict[str, dict[str, list[str]]] = {}
@@ -77,11 +93,14 @@ def main() -> None:
         def one(q: str, strat=strat):
             # A fresh Retriever per query keeps last_trace thread-safe; indexes are shared.
             r = Retriever(dense, bm25, gen, n_queries=args.n_queries, fusion_depth=args.fusion_depth,
-                          rrf_k=args.rrf_k, hyde_samples=args.hyde_samples)
+                          rrf_k=args.rrf_k, hyde_samples=args.hyde_samples,
+                          rerank=reranker, doc_text=data.corpus, hyde_prompt=hyde_prompt)
             ranked = r.search(data.queries[q], args.k, strat)
             return q, ranked, r.last_trace
 
         t0 = time.time()
+        # Reranked strategies run single-threaded (one GPU model); list their base first so
+        # its LLM generations are already cached.
         workers = args.workers if strat in llm_strategies else 1
         with ThreadPoolExecutor(max_workers=workers) as pool:
             results = list(pool.map(one, qids))
@@ -90,7 +109,7 @@ def main() -> None:
         q0, _, trace0 = results[0]
         examples[strat] = {"query": data.queries[q0], "top3": runs[strat][q0][:3],
                            "relevant": sorted(qrels[q0]), **trace0}
-        print(f"{strat:>13}: done ({timing[strat]:.2f}s/query)", flush=True)
+        print(f"{strat:>24}: done ({timing[strat]:.2f}s/query)", flush=True)
 
     metrics = {s: evaluate_run(runs[s], qrels) for s in strategies}
     base = metrics.get("dense")
@@ -117,12 +136,14 @@ def main() -> None:
         "experiment": "retrieval",
         "dataset": args.dataset, "split": args.split, "n_docs": len(data.corpus), "n_queries": len(qids),
         "embedder": args.embedder, "llm": args.llm if needs_llm else None,
+        "reranker": args.reranker if reranker else None, "hyde_prompt": args.hyde_prompt,
         "baseline": "dense", "primary_metric": PRIMARY, "k": args.k,
         "settings": {"n_queries": args.n_queries, "hyde_samples": args.hyde_samples,
                      "rrf_k": args.rrf_k, "fusion_depth": args.fusion_depth},
         "index_build_seconds": index_seconds,
         "metrics": metrics, "vs_baseline": comparison,
         "seconds_per_query": timing, "llm_calls_made": gen.calls if gen else 0,
+        "rerank_pairs_scored": reranker.pairs_scored if reranker else 0,
         "examples": examples, "env": environment_info(),
     }
     if args.out is None:
@@ -132,12 +153,12 @@ def main() -> None:
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
 
-    print(f"\n{'strategy':>13} {'hit@1':>7} {'hit@5':>7} {'hit@10':>7} {'ndcg@10':>8} {'mrr@10':>7}")
+    print(f"\n{'strategy':>24} {'hit@1':>7} {'hit@5':>7} {'hit@10':>7} {'ndcg@10':>8} {'mrr@10':>7}")
     for s in strategies:
         m = metrics[s]
-        print(f"{s:>13} {m['hit@1']:7.3f} {m['hit@5']:7.3f} {m['hit@10']:7.3f} {m['ndcg@10']:8.3f} {m['mrr@10']:7.3f}")
+        print(f"{s:>24} {m['hit@1']:7.3f} {m['hit@5']:7.3f} {m['hit@10']:7.3f} {m['ndcg@10']:8.3f} {m['mrr@10']:7.3f}")
     for s, c in comparison.items():
-        print(f"{s:>13} vs dense: hit@5 {c['hit@5_abs_points']:+.1f} pts ({c['hit@5_rel_pct']:+.1f}%), "
+        print(f"{s:>24} vs dense: hit@5 {c['hit@5_abs_points']:+.1f} pts ({c['hit@5_rel_pct']:+.1f}%), "
               f"won {c['queries_won_vs_baseline']} lost {c['queries_lost_vs_baseline']}, p={c['mcnemar_p_hit@5']:.3f}")
     print(f"\nwrote {args.out}")
 
