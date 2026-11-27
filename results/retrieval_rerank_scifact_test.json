@@ -1,0 +1,335 @@
+{
+  "experiment": "retrieval",
+  "dataset": "scifact",
+  "split": "test",
+  "n_docs": 5183,
+  "n_queries": 300,
+  "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm": "qwen2.5:3b",
+  "reranker": "BAAI/bge-reranker-base",
+  "hyde_prompt": "claim",
+  "baseline": "dense",
+  "primary_metric": "hit@5",
+  "k": 10,
+  "settings": {
+    "n_queries": 3,
+    "hyde_samples": 1,
+    "rrf_k": 60,
+    "fusion_depth": 100
+  },
+  "index_build_seconds": 14.91743540763855,
+  "metrics": {
+    "dense": {
+      "hit@1": 0.5033333333333333,
+      "recall@1": 0.4823333333333334,
+      "mrr@1": 0.5033333333333333,
+      "ndcg@1": 0.5033333333333333,
+      "hit@3": 0.6833333333333333,
+      "recall@3": 0.6603333333333332,
+      "mrr@3": 0.5833333333333335,
+      "ndcg@3": 0.5967290066905533,
+      "hit@5": 0.7533333333333333,
+      "recall@5": 0.7379444444444444,
+      "mrr@5": 0.5996666666666666,
+      "ndcg@5": 0.6292831434933509,
+      "hit@10": 0.7933333333333333,
+      "recall@10": 0.7833333333333333,
+      "mrr@10": 0.6047248677248677,
+      "ndcg@10": 0.6450816521455768,
+      "n_queries": 300.0
+    },
+    "bm25": {
+      "hit@1": 0.5233333333333333,
+      "recall@1": 0.5075,
+      "mrr@1": 0.5233333333333333,
+      "ndcg@1": 0.5233333333333333,
+      "hit@3": 0.6933333333333334,
+      "recall@3": 0.6733333333333333,
+      "mrr@3": 0.5988888888888891,
+      "ndcg@3": 0.6121374942650107,
+      "hit@5": 0.7566666666666667,
+      "recall@5": 0.7284444444444443,
+      "mrr@5": 0.6132222222222224,
+      "ndcg@5": 0.6360323817543183,
+      "hit@10": 0.7966666666666666,
+      "recall@10": 0.7739999999999999,
+      "mrr@10": 0.6186150793650796,
+      "ndcg@10": 0.6518925893260473,
+      "n_queries": 300.0
+    },
+    "hybrid": {
+      "hit@1": 0.55,
+      "recall@1": 0.5295555555555556,
+      "mrr@1": 0.55,
+      "ndcg@1": 0.55,
+      "hit@3": 0.7266666666666667,
+      "recall@3": 0.7049444444444444,
+      "mrr@3": 0.6316666666666668,
+      "ndcg@3": 0.6450389991582484,
+      "hit@5": 0.76,
+      "recall@5": 0.7394999999999999,
+      "mrr@5": 0.6391666666666669,
+      "ndcg@5": 0.6591589033274582,
+      "hit@10": 0.82,
+      "recall@10": 0.8058888888888889,
+      "mrr@10": 0.6471931216931217,
+      "ndcg@10": 0.681646839728465,
+      "n_queries": 300.0
+    },
+    "hyde": {
+      "hit@1": 0.5366666666666666,
+      "recall@1": 0.517888888888889,
+      "mrr@1": 0.5366666666666666,
+      "ndcg@1": 0.5366666666666666,
+      "hit@3": 0.7266666666666667,
+      "recall@3": 0.7050555555555555,
+      "mrr@3": 0.6200000000000001,
+      "ndcg@3": 0.6368267678516006,
+      "hit@5": 0.7733333333333333,
+      "recall@5": 0.7629444444444445,
+      "mrr@5": 0.631,
+      "ndcg@5": 0.6606771354566527,
+      "hit@10": 0.82,
+      "recall@10": 0.8096666666666666,
+      "mrr@10": 0.6373941798941798,
+      "ndcg@10": 0.6774733983136424,
+      "n_queries": 300.0
+    },
+    "hyde_hybrid": {
+      "hit@1": 0.5533333333333333,
+      "recall@1": 0.5367777777777778,
+      "mrr@1": 0.5533333333333333,
+      "ndcg@1": 0.5533333333333333,
+      "hit@3": 0.7466666666666667,
+      "recall@3": 0.7243888888888889,
+      "mrr@3": 0.6427777777777779,
+      "ndcg@3": 0.6591006652909566,
+      "hit@5": 0.7866666666666666,
+      "recall@5": 0.7667222222222222,
+      "mrr@5": 0.6514444444444446,
+      "ndcg@5": 0.6759337826904855,
+      "hit@10": 0.8466666666666667,
+      "recall@10": 0.8330555555555555,
+      "mrr@10": 0.6592261904761905,
+      "ndcg@10": 0.6988767203400372,
+      "n_queries": 300.0
+    },
+    "fusion_hybrid": {
+      "hit@1": 0.55,
+      "recall@1": 0.5306666666666667,
+      "mrr@1": 0.55,
+      "ndcg@1": 0.55,
+      "hit@3": 0.7166666666666667,
+      "recall@3": 0.6938333333333333,
+      "mrr@3": 0.6266666666666668,
+      "ndcg@3": 0.6378460388861193,
+      "hit@5": 0.77,
+      "recall@5": 0.7513333333333333,
+      "mrr@5": 0.6388333333333334,
+      "ndcg@5": 0.6613976220954535,
+      "hit@10": 0.8533333333333334,
+      "recall@10": 0.8382777777777778,
+      "mrr@10": 0.6502367724867724,
+      "ndcg@10": 0.6914930489720241,
+      "n_queries": 300.0
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@1": 0.6,
+      "recall@1": 0.5752777777777779,
+      "mrr@1": 0.6,
+      "ndcg@1": 0.6,
+      "hit@3": 0.7433333333333333,
+      "recall@3": 0.721111111111111,
+      "mrr@3": 0.6655555555555556,
+      "ndcg@3": 0.6711963245591192,
+      "hit@5": 0.79,
+      "recall@5": 0.7728888888888888,
+      "mrr@5": 0.6763888888888888,
+      "ndcg@5": 0.6930680801867318,
+      "hit@10": 0.87,
+      "recall@10": 0.854888888888889,
+      "mrr@10": 0.6876865079365078,
+      "ndcg@10": 0.7227017377903857,
+      "n_queries": 300.0
+    }
+  },
+  "vs_baseline": {
+    "bm25": {
+      "hit@5_abs_points": 0.33333333333334103,
+      "hit@5_rel_pct": 0.4424778761062065,
+      "ndcg@10_abs_points": 0.6810937180470544,
+      "ndcg@10_rel_pct": 1.0558255932124228,
+      "queries_won_vs_baseline": 28,
+      "queries_lost_vs_baseline": 27,
+      "mcnemar_p_hit@5": 1.0
+    },
+    "hybrid": {
+      "hit@5_abs_points": 0.666666666666671,
+      "hit@5_rel_pct": 0.8849557522123908,
+      "ndcg@10_abs_points": 3.656518758288818,
+      "ndcg@10_rel_pct": 5.668303766084559,
+      "queries_won_vs_baseline": 17,
+      "queries_lost_vs_baseline": 15,
+      "mcnemar_p_hit@5": 0.860050065908581
+    },
+    "hyde": {
+      "hit@5_abs_points": 2.0000000000000018,
+      "hit@5_rel_pct": 2.6548672566371723,
+      "ndcg@10_abs_points": 3.2391746168065616,
+      "ndcg@10_rel_pct": 5.021340486173953,
+      "queries_won_vs_baseline": 10,
+      "queries_lost_vs_baseline": 4,
+      "mcnemar_p_hit@5": 0.1795654296875
+    },
+    "hyde_hybrid": {
+      "hit@5_abs_points": 3.3333333333333326,
+      "hit@5_rel_pct": 4.424778761061954,
+      "ndcg@10_abs_points": 5.3795068194460445,
+      "ndcg@10_rel_pct": 8.339264962123028,
+      "queries_won_vs_baseline": 24,
+      "queries_lost_vs_baseline": 14,
+      "mcnemar_p_hit@5": 0.14330665429588407
+    },
+    "fusion_hybrid": {
+      "hit@5_abs_points": 1.6666666666666718,
+      "hit@5_rel_pct": 2.212389380530988,
+      "ndcg@10_abs_points": 4.641139682644734,
+      "ndcg@10_rel_pct": 7.194654610324225,
+      "queries_won_vs_baseline": 24,
+      "queries_lost_vs_baseline": 19,
+      "mcnemar_p_hit@5": 0.542384011856484
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@5_abs_points": 3.6666666666666736,
+      "hit@5_rel_pct": 4.86725663716816,
+      "ndcg@10_abs_points": 7.762008564480894,
+      "ndcg@10_rel_pct": 12.032598568978091,
+      "queries_won_vs_baseline": 29,
+      "queries_lost_vs_baseline": 18,
+      "mcnemar_p_hit@5": 0.14386508844054902
+    }
+  },
+  "seconds_per_query": {
+    "dense": 0.008946709632873535,
+    "bm25": 0.01793680191040039,
+    "hybrid": 0.03698434829711914,
+    "hyde": 4.808565998872121,
+    "hyde_hybrid": 0.04164889176686605,
+    "fusion_hybrid": 0.4144551229476929,
+    "fusion_hybrid+rerank@50": 1.7728864391644796
+  },
+  "llm_calls_made": 600,
+  "rerank_pairs_scored": 15000,
+  "examples": {
+    "dense": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "29638116",
+        "4346436",
+        "3874000"
+      ],
+      "relevant": [
+        "31715818"
+      ]
+    },
+    "bm25": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "10608397",
+        "43385013",
+        "40212412"
+      ],
+      "relevant": [
+        "31715818"
+      ]
+    },
+    "hybrid": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "803312",
+        "43385013",
+        "40212412"
+      ],
+      "relevant": [
+        "31715818"
+      ]
+    },
+    "hyde": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "31715818",
+        "11172205",
+        "29638116"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Show Inductive Properties\n\nRecent advancements in the field of nanotechnology have led to the development of materials with dimensions so small that they can be considered 0-dimensional (0D). These materials, such as nanoparticles and quantum dots, exhibit unique physical and chemical properties that are fundamentally different from their bulk counterparts. One of the intriguing properties of these 0D materials is their ability to induce biological responses, a phenomenon that has been termed \"inductive properties.\"\n\nInductive properties refer to the ability of a material to influence or control the behavior of living systems, including cells, tissues, and organs. In the context of 0D biomaterials, these properties are particularly pronounced due to their high surface-to-volume ratio and the presence of functional groups that can interact with biological molecules. For instance, nanoparticles can be engineered to carry specific therapeutic agents or to deliver genetic material to target cells, thereby inducing changes in cellular function or gene expression.\n\nMoreover, the unique optical and electronic properties of 0D materials, such as quantum dots, have been exploited to create stimuli-responsive systems that can be used for targeted drug delivery. These materials can be designed to respond to external stimuli such as pH, temperature, or electromagnetic fields, allowing for precise control over the release of therapeutic agents. This capability to respond to external cues and induce specific biological outcomes is a hallmark of inductive properties.\n\nFurthermore, the interaction between 0D materials and biological systems often involves complex intermolecular interactions, such as electrostatic, van der Waals, and hydrogen bonding. These interactions can lead to the formation of specific nanostructures or complexes that can modulate cellular processes, such as cell adhesion, migration, and differentiation. For example, the use of gold nanoparticles in cancer therapy has been shown to induce apoptosis in cancer cells by disrupting their cellular machinery, a process that can be considered an inductive response.\n\nIn summary, the inductive properties of 0D biomaterials are a testament to their unique ability to interact with and influence biological systems. These properties are not only a result of their small size but also of their tailored surface chemistry and functional groups. As research in this area continues to advance, the potential applications of 0D materials in biomedicine are likely to expand, further solidifying their role as powerful tools for inducing biological responses."
+      ]
+    },
+    "hyde_hybrid": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "6863070",
+        "10607877",
+        "803312"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Show Inductive Properties\n\nRecent advancements in the field of nanotechnology have led to the development of materials with dimensions so small that they can be considered 0-dimensional (0D). These materials, such as nanoparticles and quantum dots, exhibit unique physical and chemical properties that are fundamentally different from their bulk counterparts. One of the intriguing properties of these 0D materials is their ability to induce biological responses, a phenomenon that has been termed \"inductive properties.\"\n\nInductive properties refer to the ability of a material to influence or control the behavior of living systems, including cells, tissues, and organs. In the context of 0D biomaterials, these properties are particularly pronounced due to their high surface-to-volume ratio and the presence of functional groups that can interact with biological molecules. For instance, nanoparticles can be engineered to carry specific therapeutic agents or to deliver genetic material to target cells, thereby inducing changes in cellular function or gene expression.\n\nMoreover, the unique optical and electronic properties of 0D materials, such as quantum dots, have been exploited to create stimuli-responsive systems that can be used for targeted drug delivery. These materials can be designed to respond to external stimuli such as pH, temperature, or electromagnetic fields, allowing for precise control over the release of therapeutic agents. This capability to respond to external cues and induce specific biological outcomes is a hallmark of inductive properties.\n\nFurthermore, the interaction between 0D materials and biological systems often involves complex intermolecular interactions, such as electrostatic, van der Waals, and hydrogen bonding. These interactions can lead to the formation of specific nanostructures or complexes that can modulate cellular processes, such as cell adhesion, migration, and differentiation. For example, the use of gold nanoparticles in cancer therapy has been shown to induce apoptosis in cancer cells by disrupting their cellular machinery, a process that can be considered an inductive response.\n\nIn summary, the inductive properties of 0D biomaterials are a testament to their unique ability to interact with and influence biological systems. These properties are not only a result of their small size but also of their tailored surface chemistry and functional groups. As research in this area continues to advance, the potential applications of 0D materials in biomedicine are likely to expand, further solidifying their role as powerful tools for inducing biological responses."
+      ]
+    },
+    "fusion_hybrid": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "6863070",
+        "10607877",
+        "803312"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials show inductive properties.",
+        "0-dimensional biomaterials induce cellular responses",
+        "Inductive properties of zero-dimensional materials in biology",
+        "0-dimensional materials and their cellular induction capabilities"
+      ]
+    },
+    "fusion_hybrid+rerank@50": {
+      "query": "0-dimensional biomaterials show inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "32532238"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials show inductive properties.",
+        "0-dimensional biomaterials induce cellular responses",
+        "Inductive properties of zero-dimensional materials in biology",
+        "0-dimensional materials and their cellular induction capabilities"
+      ],
+      "rerank_depth": 50
+    }
+  },
+  "env": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "numpy": "2.1.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.20.2",
+    "sentence-transformers": "5.7.0",
+    "onnx": "1.23.2",
+    "langgraph": "1.2.17",
+    "langchain-core": "1.7.0",
+    "langchain-ollama": "1.2.0",
+    "rank-bm25": "0.2.2",
+    "cuda_device": "Tesla T4"
+  }
+}

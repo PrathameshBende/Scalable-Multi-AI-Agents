@@ -57,7 +57,8 @@ Full tables: `results/SUMMARY.md`. Every change made after seeing a number: `res
 
 | Experiment | Headline (honest) |
 |---|---|
-| Retrieval, SciFact test (300 q) | HyDE + BM25 fused with RRF: nDCG@10 0.645 -> 0.694 (**+7.6%**), hit@5 0.753 -> 0.780 (+2.7 pts, p = 0.24, not significant) |
+| Retrieval, SciFact test (300 q) | Round 1, HyDE + BM25 fused with RRF: nDCG@10 0.645 -> 0.694 (+7.6%), hit@5 +2.7 pts (p = 0.24). Round 2, RAG-Fusion + BM25 then bge-reranker-base on the top 50 (chosen on train): nDCG@10 0.645 -> 0.723 (**+12.0%**), hit@1 0.503 -> 0.600, hit@5 0.753 -> 0.790 (+3.7 pts, +4.9%, p = 0.14, not significant) |
+| Retrieval, NFCorpus test (323 q, held out) | Same reranked pipeline: nDCG@10 +3.4%, hit@5 +1.5 pts over dense; **worse than the same pipeline without reranking** (+12.3% nDCG@10). The reranker gain did not transfer. |
 | ReAct agent, qwen2.5:7b | Round 1: **60.0%** (18/30) on 30 fresh tasks. Round 2, after redesigning the shipping tool so the tool (not the model) multiplies unit weight by quantity: **86.7%** (26/30, 95% CI 70-95%) on 30 new tasks run once. Self-consistency voting (3 or 5 samples) added nothing on 42 dev tasks. |
 | ONNX int8 embedder | 90.4 -> 22.9 MB (**-74.9%**); nDCG@10 -0.97% relative, hit@5 -3.0 pts |
 | GGUF | not finished (llama.cpp CUDA build too slow on Colab's 2 CPU cores) |
@@ -67,6 +68,6 @@ Full tables: `results/SUMMARY.md`. Every change made after seeing a number: `res
 - 30 agent tasks is a small set: the 95% interval is roughly +-10 points.
 - Agent tasks use fictional data written for this repo; they test tool use and
   arithmetic chaining, not open-ended reasoning.
-- SciFact is one domain (biomedical claims); HyDE's benefit varies by domain.
+- Retrieval configs were chosen on SciFact; the NFCorpus check shows the reranker gain is domain-dependent (it hurt there).
 - Dense index is brute-force numpy (exact, fine for ~10^5 docs); larger corpora need ANN (FAISS/HNSW).
 - LLM generations use temperature 0 and one sample; HyDE's paper averages several samples.

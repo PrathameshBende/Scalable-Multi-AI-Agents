@@ -27,6 +27,22 @@ Embedder `sentence-transformers/all-MiniLM-L6-v2`, LLM `qwen2.5:3b`. Baseline = 
 
 (s/query for hyde includes generating the passage; hyde_hybrid reused the cached passages.)
 
+## Retrieval round 2: cross-encoder reranking (Kaggle T4, 2026-11-27)
+Chosen on SciFact train (200 q) from 24 configs: `fusion_hybrid+rerank@50` with
+`BAAI/bge-reranker-base` (`results/tuning/rerank_choice.json`). Baseline unchanged (dense).
+
+| dataset | strategy | hit@1 | hit@5 | hit@10 | nDCG@10 | hit@5 vs dense | nDCG@10 vs dense | McNemar p |
+|---|---|---|---|---|---|---|---|---|
+| SciFact test (300 q, 2nd look) | dense | 0.503 | 0.753 | 0.793 | 0.645 | - | - | - |
+| | hyde_hybrid | 0.553 | 0.787 | 0.847 | 0.699 | +3.3 pts (+4.4%) | +8.3% | 0.14 |
+| | **fusion_hybrid + rerank@50** | **0.600** | **0.790** | **0.870** | **0.723** | **+3.7 pts (+4.9%)** | **+12.0%** | 0.14 |
+| NFCorpus test (323 q, held out) | dense | 0.421 | 0.647 | 0.690 | 0.317 | - | - | - |
+| | fusion_hybrid (no rerank) | 0.471 | 0.678 | 0.746 | 0.356 | +3.1 pts (+4.8%) | +12.3% | 0.14 |
+| | **fusion_hybrid + rerank@50** | 0.467 | 0.663 | 0.718 | 0.327 | +1.5 pts (+2.4%) | +3.4% | 0.58 |
+
+Reranking helped on SciFact and hurt on NFCorpus (vs its own base). Train-set gain for the
+chosen config was +11.1% hit@5, test +4.9%: selecting from 24 configs overstates the gain.
+
 ## ReAct agent, round 2 (Kaggle T4, 2026-11-27): shipping tool `product`, 1 vote
 
 Config chosen on 42 dev tasks by a pre-declared rule (`results/tuning/round2_choice.json`):

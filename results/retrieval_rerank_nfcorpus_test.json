@@ -1,0 +1,363 @@
+{
+  "experiment": "retrieval",
+  "dataset": "nfcorpus",
+  "split": "test",
+  "n_docs": 3633,
+  "n_queries": 323,
+  "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm": "qwen2.5:3b",
+  "reranker": "BAAI/bge-reranker-base",
+  "hyde_prompt": "question",
+  "baseline": "dense",
+  "primary_metric": "hit@5",
+  "k": 10,
+  "settings": {
+    "n_queries": 3,
+    "hyde_samples": 1,
+    "rrf_k": 60,
+    "fusion_depth": 100
+  },
+  "index_build_seconds": 10.215531349182129,
+  "metrics": {
+    "dense": {
+      "hit@1": 0.42105263157894735,
+      "recall@1": 0.043896804988942224,
+      "mrr@1": 0.42105263157894735,
+      "ndcg@1": 0.40092879256965946,
+      "hit@3": 0.5696594427244582,
+      "recall@3": 0.09050733561677102,
+      "mrr@3": 0.4840041279669761,
+      "ndcg@3": 0.3640890597330448,
+      "hit@5": 0.6470588235294118,
+      "recall@5": 0.11965315421231905,
+      "mrr@5": 0.5019607843137252,
+      "ndcg@5": 0.34274185906197124,
+      "hit@10": 0.6904024767801857,
+      "recall@10": 0.15498797328057842,
+      "mrr@10": 0.5076539387684896,
+      "ndcg@10": 0.31667312754717797,
+      "n_queries": 323.0
+    },
+    "bm25": {
+      "hit@1": 0.42724458204334365,
+      "recall@1": 0.05652275588346354,
+      "mrr@1": 0.42724458204334365,
+      "ndcg@1": 0.413312693498452,
+      "hit@3": 0.5572755417956656,
+      "recall@3": 0.09878155048276574,
+      "mrr@3": 0.48503611971104227,
+      "ndcg@3": 0.35897281842334244,
+      "hit@5": 0.6222910216718266,
+      "recall@5": 0.11504958852884166,
+      "mrr@5": 0.49974200206398356,
+      "ndcg@5": 0.33406461683779026,
+      "hit@10": 0.6965944272445821,
+      "recall@10": 0.15214317537189637,
+      "mrr@10": 0.5089709568037741,
+      "ndcg@10": 0.30616309198127917,
+      "n_queries": 323.0
+    },
+    "hybrid": {
+      "hit@1": 0.4613003095975232,
+      "recall@1": 0.054845441783616125,
+      "mrr@1": 0.4613003095975232,
+      "ndcg@1": 0.4411764705882353,
+      "hit@3": 0.5944272445820433,
+      "recall@3": 0.10604841516053533,
+      "mrr@3": 0.5216718266253869,
+      "ndcg@3": 0.3985136889221795,
+      "hit@5": 0.6470588235294118,
+      "recall@5": 0.12630738633789698,
+      "mrr@5": 0.5335913312693497,
+      "ndcg@5": 0.3652763220905855,
+      "hit@10": 0.7089783281733746,
+      "recall@10": 0.1583097598469307,
+      "mrr@10": 0.5421175487738953,
+      "ndcg@10": 0.33360230768531857,
+      "n_queries": 323.0
+    },
+    "hyde": {
+      "hit@1": 0.47368421052631576,
+      "recall@1": 0.04637733005257863,
+      "mrr@1": 0.47368421052631576,
+      "ndcg@1": 0.4473684210526316,
+      "hit@3": 0.6130030959752322,
+      "recall@3": 0.10390862333281352,
+      "mrr@3": 0.5345717234262127,
+      "ndcg@3": 0.39996026110659055,
+      "hit@5": 0.6656346749226006,
+      "recall@5": 0.12870068144196925,
+      "mrr@5": 0.5468008255933954,
+      "ndcg@5": 0.3759223651287821,
+      "hit@10": 0.7244582043343654,
+      "recall@10": 0.16679740976473556,
+      "mrr@10": 0.5551820728291318,
+      "ndcg@10": 0.34309697215168083,
+      "n_queries": 323.0
+    },
+    "hyde_hybrid": {
+      "hit@1": 0.47987616099071206,
+      "recall@1": 0.0560214643475854,
+      "mrr@1": 0.47987616099071206,
+      "ndcg@1": 0.456656346749226,
+      "hit@3": 0.631578947368421,
+      "recall@3": 0.11139192881969795,
+      "mrr@3": 0.546439628482972,
+      "ndcg@3": 0.412717181029252,
+      "hit@5": 0.6687306501547987,
+      "recall@5": 0.13292731140458583,
+      "mrr@5": 0.554798761609907,
+      "ndcg@5": 0.3783789307588682,
+      "hit@10": 0.7368421052631579,
+      "recall@10": 0.17279158289639435,
+      "mrr@10": 0.5637365472504791,
+      "ndcg@10": 0.34955202381770706,
+      "n_queries": 323.0
+    },
+    "fusion_hybrid": {
+      "hit@1": 0.47058823529411764,
+      "recall@1": 0.06169237789579019,
+      "mrr@1": 0.47058823529411764,
+      "ndcg@1": 0.4520123839009288,
+      "hit@3": 0.6191950464396285,
+      "recall@3": 0.11224679630794598,
+      "mrr@3": 0.5366357069143446,
+      "ndcg@3": 0.41615640025777334,
+      "hit@5": 0.6780185758513931,
+      "recall@5": 0.13649589940899193,
+      "mrr@5": 0.5504127966976264,
+      "ndcg@5": 0.391350870925648,
+      "hit@10": 0.7461300309597523,
+      "recall@10": 0.17569267894830565,
+      "mrr@10": 0.5592264976165905,
+      "ndcg@10": 0.3557814243185387,
+      "n_queries": 323.0
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@1": 0.4674922600619195,
+      "recall@1": 0.05706609782409233,
+      "mrr@1": 0.4674922600619195,
+      "ndcg@1": 0.4520123839009288,
+      "hit@3": 0.6068111455108359,
+      "recall@3": 0.10156581309230193,
+      "mrr@3": 0.5288957688338493,
+      "ndcg@3": 0.382761568705797,
+      "hit@5": 0.6625386996904025,
+      "recall@5": 0.11961716468684204,
+      "mrr@5": 0.5412796697626419,
+      "ndcg@5": 0.3581716330970306,
+      "hit@10": 0.718266253869969,
+      "recall@10": 0.15135895832550647,
+      "mrr@10": 0.5487296673055186,
+      "ndcg@10": 0.32735890687945135,
+      "n_queries": 323.0
+    }
+  },
+  "vs_baseline": {
+    "bm25": {
+      "hit@5_abs_points": -2.4767801857585203,
+      "hit@5_rel_pct": -3.8277511961722577,
+      "ndcg@10_abs_points": -1.05100355658988,
+      "ndcg@10_rel_pct": -3.318890885155079,
+      "queries_won_vs_baseline": 22,
+      "queries_lost_vs_baseline": 30,
+      "mcnemar_p_hit@5": 0.3317497633694906
+    },
+    "hybrid": {
+      "hit@5_abs_points": 0.0,
+      "hit@5_rel_pct": 0.0,
+      "ndcg@10_abs_points": 1.6929180138140598,
+      "ndcg@10_rel_pct": 5.345947813528484,
+      "queries_won_vs_baseline": 20,
+      "queries_lost_vs_baseline": 20,
+      "mcnemar_p_hit@5": 1.0
+    },
+    "hyde": {
+      "hit@5_abs_points": 1.8575851393188847,
+      "hit@5_rel_pct": 2.8708133971291794,
+      "ndcg@10_abs_points": 2.6423844604502866,
+      "ndcg@10_rel_pct": 8.344201735452362,
+      "queries_won_vs_baseline": 16,
+      "queries_lost_vs_baseline": 10,
+      "mcnemar_p_hit@5": 0.32693958282470703
+    },
+    "hyde_hybrid": {
+      "hit@5_abs_points": 2.1671826625386914,
+      "hit@5_rel_pct": 3.349282296650702,
+      "ndcg@10_abs_points": 3.287889627052909,
+      "ndcg@10_rel_pct": 10.382597514729387,
+      "queries_won_vs_baseline": 24,
+      "queries_lost_vs_baseline": 17,
+      "mcnemar_p_hit@5": 0.34888887944907765
+    },
+    "fusion_hybrid": {
+      "hit@5_abs_points": 3.0959752321981338,
+      "hit@5_rel_pct": 4.784688995215292,
+      "ndcg@10_abs_points": 3.910829677136074,
+      "ndcg@10_rel_pct": 12.349736485150409,
+      "queries_won_vs_baseline": 24,
+      "queries_lost_vs_baseline": 14,
+      "mcnemar_p_hit@5": 0.14330665429588407
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@5_abs_points": 1.5479876160990669,
+      "hit@5_rel_pct": 2.392344497607657,
+      "ndcg@10_abs_points": 1.0685779332273382,
+      "ndcg@10_rel_pct": 3.3743877843507297,
+      "queries_won_vs_baseline": 29,
+      "queries_lost_vs_baseline": 24,
+      "mcnemar_p_hit@5": 0.5831321542611763
+    }
+  },
+  "seconds_per_query": {
+    "dense": 0.009053983186420641,
+    "bm25": 0.0038841132409063285,
+    "hybrid": 0.01404143117898758,
+    "hyde": 4.262137373903587,
+    "hyde_hybrid": 0.018997442611599854,
+    "fusion_hybrid": 0.2618812075340342,
+    "fusion_hybrid+rerank@50": 1.7333177162028688
+  },
+  "llm_calls_made": 646,
+  "rerank_pairs_scored": 15903,
+  "examples": {
+    "dense": {
+      "query": "deafness",
+      "top3": [
+        "MED-901",
+        "MED-4668",
+        "MED-3863"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ]
+    },
+    "bm25": {
+      "query": "deafness",
+      "top3": [
+        "MED-5360",
+        "MED-5361",
+        "MED-5368"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ]
+    },
+    "hybrid": {
+      "query": "deafness",
+      "top3": [
+        "MED-666",
+        "MED-14",
+        "MED-901"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ]
+    },
+    "hyde": {
+      "query": "deafness",
+      "top3": [
+        "MED-901",
+        "MED-4668",
+        "MED-3863"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ],
+      "hyde_passages": [
+        "Certainly! Here is a passage for a scientific paper addressing the topic of deafness:\n\n---\n\nIn recent years, the study of deafness has expanded significantly, encompassing a wide range of genetic, environmental, and developmental factors. Deafness, or hearing loss, is a condition that affects millions of individuals worldwide, impacting their ability to communicate and socialize effectively. This condition can be categorized into two main types: congenital and acquired. Congenital deafness, which is present at birth, can be attributed to a variety of causes, including genetic mutations, infections during pregnancy, and complications during childbirth. In contrast, acquired deafness, which develops later in life, can be caused by various factors such as noise exposure, aging, and certain medical conditions.\n\nGenetic factors play a crucial role in the development of deafness. Mutations in genes responsible for the development and function of the auditory system can lead to hearing loss. For instance, mutations in the GJB2 gene, which encodes for a protein critical for the transmission of sound waves to the inner ear, are a common cause of congenital deafness. Additionally, environmental factors such as noise exposure and ototoxic medications can also contribute to the development of acquired deafness. Noise-induced hearing loss, for example, is a significant public health concern, particularly in occupational settings and recreational environments.\n\nMoreover, the impact of deafness extends beyond the individual level, affecting families, communities, and society at large. Children who are born deaf or develop hearing loss later in life often require specialized educational and communication support to ensure they can fully participate in society. This includes the use of sign language, cochlear implants, and other assistive technologies. Furthermore, the social and emotional well-being of individuals with deafness is also a critical area of research, as they may experience stigma, discrimination, and social isolation.\n\nIn conclusion, the study of deafness is a multifaceted field that requires a comprehensive understanding of both genetic and environmental factors. By addressing the causes and consequences of deafness, researchers and healthcare professionals can develop more effective prevention strategies, diagnostic tools, and therapeutic interventions. This, in turn, can lead to improved quality of life for individuals affected by deafness and contribute to a more inclusive and supportive society.\n\n---\n\nFeel free to modify or expand upon this passage as needed for your specific scientific paper."
+      ]
+    },
+    "hyde_hybrid": {
+      "query": "deafness",
+      "top3": [
+        "MED-306",
+        "MED-301",
+        "MED-14"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ],
+      "hyde_passages": [
+        "Certainly! Here is a passage for a scientific paper addressing the topic of deafness:\n\n---\n\nIn recent years, the study of deafness has expanded significantly, encompassing a wide range of genetic, environmental, and developmental factors. Deafness, or hearing loss, is a condition that affects millions of individuals worldwide, impacting their ability to communicate and socialize effectively. This condition can be categorized into two main types: congenital and acquired. Congenital deafness, which is present at birth, can be attributed to a variety of causes, including genetic mutations, infections during pregnancy, and complications during childbirth. In contrast, acquired deafness, which develops later in life, can be caused by various factors such as noise exposure, aging, and certain medical conditions.\n\nGenetic factors play a crucial role in the development of deafness. Mutations in genes responsible for the development and function of the auditory system can lead to hearing loss. For instance, mutations in the GJB2 gene, which encodes for a protein critical for the transmission of sound waves to the inner ear, are a common cause of congenital deafness. Additionally, environmental factors such as noise exposure and ototoxic medications can also contribute to the development of acquired deafness. Noise-induced hearing loss, for example, is a significant public health concern, particularly in occupational settings and recreational environments.\n\nMoreover, the impact of deafness extends beyond the individual level, affecting families, communities, and society at large. Children who are born deaf or develop hearing loss later in life often require specialized educational and communication support to ensure they can fully participate in society. This includes the use of sign language, cochlear implants, and other assistive technologies. Furthermore, the social and emotional well-being of individuals with deafness is also a critical area of research, as they may experience stigma, discrimination, and social isolation.\n\nIn conclusion, the study of deafness is a multifaceted field that requires a comprehensive understanding of both genetic and environmental factors. By addressing the causes and consequences of deafness, researchers and healthcare professionals can develop more effective prevention strategies, diagnostic tools, and therapeutic interventions. This, in turn, can lead to improved quality of life for individuals affected by deafness and contribute to a more inclusive and supportive society.\n\n---\n\nFeel free to modify or expand upon this passage as needed for your specific scientific paper."
+      ]
+    },
+    "fusion_hybrid": {
+      "query": "deafness",
+      "top3": [
+        "MED-901",
+        "MED-4668",
+        "MED-3774"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ],
+      "queries": [
+        "deafness",
+        "hearing impairment research",
+        "study on auditory system disorders",
+        "deafness treatment and management"
+      ]
+    },
+    "fusion_hybrid+rerank@50": {
+      "query": "deafness",
+      "top3": [
+        "MED-4668",
+        "MED-3383",
+        "MED-1848"
+      ],
+      "relevant": [
+        "MED-4532",
+        "MED-4533",
+        "MED-4534",
+        "MED-4535",
+        "MED-4536"
+      ],
+      "queries": [
+        "deafness",
+        "hearing impairment research",
+        "study on auditory system disorders",
+        "deafness treatment and management"
+      ],
+      "rerank_depth": 50
+    }
+  },
+  "env": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "numpy": "2.1.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.20.2",
+    "sentence-transformers": "5.7.0",
+    "onnx": "1.23.2",
+    "langgraph": "1.2.17",
+    "langchain-core": "1.7.0",
+    "langchain-ollama": "1.2.0",
+    "rank-bm25": "0.2.2",
+    "cuda_device": "Tesla T4"
+  }
+}

@@ -1,0 +1,29 @@
+  baseline dense          hit@5 0.765  nDCG@10 0.675
+  baseline hybrid         hit@5 0.785  nDCG@10 0.680
+  baseline hyde_hybrid    hit@5 0.800  nDCG@10 0.694
+  baseline fusion_hybrid  hit@5 0.790  nDCG@10 0.708
+bge-reranker-base        dense          @20   hit@5 0.825  nDCG@10 0.738  0.67s/q
+bge-reranker-base        dense          @50   hit@5 0.835  nDCG@10 0.735  1.00s/q
+bge-reranker-base        dense          @100  hit@5 0.835  nDCG@10 0.738  1.66s/q
+bge-reranker-base        fusion_hybrid  @20   hit@5 0.845  nDCG@10 0.742  0.12s/q
+bge-reranker-base        fusion_hybrid  @50   hit@5 0.850  nDCG@10 0.748  0.17s/q  <- chosen
+bge-reranker-base        fusion_hybrid  @100  hit@5 0.830  nDCG@10 0.736  0.52s/q
+bge-reranker-base        hybrid         @20   hit@5 0.830  nDCG@10 0.727  0.07s/q
+bge-reranker-base        hybrid         @50   hit@5 0.850  nDCG@10 0.741  0.37s/q
+bge-reranker-base        hybrid         @100  hit@5 0.830  nDCG@10 0.734  0.90s/q
+bge-reranker-base        hyde_hybrid    @20   hit@5 0.835  nDCG@10 0.733  0.05s/q
+bge-reranker-base        hyde_hybrid    @50   hit@5 0.845  nDCG@10 0.740  0.08s/q
+bge-reranker-base        hyde_hybrid    @100  hit@5 0.830  nDCG@10 0.732  0.19s/q
+ms-marco-MiniLM-L-6-v2   dense          @20   hit@5 0.790  nDCG@10 0.710  0.13s/q
+ms-marco-MiniLM-L-6-v2   dense          @50   hit@5 0.785  nDCG@10 0.704  0.21s/q
+ms-marco-MiniLM-L-6-v2   dense          @100  hit@5 0.790  nDCG@10 0.712  0.38s/q
+ms-marco-MiniLM-L-6-v2   fusion_hybrid  @20   hit@5 0.790  nDCG@10 0.719  0.12s/q
+ms-marco-MiniLM-L-6-v2   fusion_hybrid  @50   hit@5 0.800  nDCG@10 0.719  0.14s/q
+ms-marco-MiniLM-L-6-v2   fusion_hybrid  @100  hit@5 0.790  nDCG@10 0.713  0.20s/q
+ms-marco-MiniLM-L-6-v2   hybrid         @20   hit@5 0.785  nDCG@10 0.704  0.04s/q
+ms-marco-MiniLM-L-6-v2   hybrid         @50   hit@5 0.800  nDCG@10 0.717  0.10s/q
+ms-marco-MiniLM-L-6-v2   hybrid         @100  hit@5 0.790  nDCG@10 0.712  0.22s/q
+ms-marco-MiniLM-L-6-v2   hyde_hybrid    @20   hit@5 0.780  nDCG@10 0.707  0.05s/q
+ms-marco-MiniLM-L-6-v2   hyde_hybrid    @50   hit@5 0.795  nDCG@10 0.714  0.06s/q
+ms-marco-MiniLM-L-6-v2   hyde_hybrid    @100  hit@5 0.790  nDCG@10 0.712  0.07s/q
+CHOICE fusion_hybrid 50 BAAI/bge-reranker-base

@@ -103,9 +103,24 @@ Final, each run once (`scripts/run_rerank.sh`):
 
 | # | Run | Data | Result | Kept? |
 |---|---|---|---|---|
-| RR-1 | 24 reranking configs | SciFact train (200) | (pending) | |
-| RR-2 | chosen config vs dense | SciFact test (300), 2nd look | (pending) | |
-| RR-3 | chosen config vs dense | NFCorpus test (323), held out | (pending) | |
+| RR-1 | 24 reranking configs (Kaggle T4) | SciFact train (200) | dense 0.765 / 0.675; best: **fusion_hybrid + bge-reranker-base @50, 0.850 / 0.748** (hit@5 / nDCG@10); every bge config beat every MiniLM config | chosen (rule) |
+| RR-2 | chosen config vs dense | SciFact test (300), 2nd look | 0.753 -> **0.790** hit@5 (+3.7 pts, +4.9%, p=0.14); nDCG@10 0.645 -> **0.723 (+12.0%)**; hit@1 0.503 -> 0.600 | reported |
+| RR-3 | chosen config vs dense | NFCorpus test (323), held out | 0.647 -> 0.663 hit@5 (+1.5 pts, +2.4%, p=0.58); nDCG@10 0.317 -> 0.327 (+3.4%). Its own base, fusion_hybrid without reranking, did better: 0.678 / 0.356 (+12.3% nDCG@10) | reported |
+
+What reranking showed:
+- On SciFact it is the biggest single gain so far: nDCG@10 +12.0% over dense (round 1 best:
+  +7.6%) and hit@1 +9.7 pts. hit@5 rose only +3.7 pts and is not significant (p = 0.14).
+- **Winner's curse**: on train the chosen config gained +8.5 pts hit@5 (+11.1%); on test,
+  +3.7 pts. Picking the best of 24 configs on 200 queries overstates the gain.
+- **It did not transfer to NFCorpus**: there the reranker made its base strategy worse
+  (nDCG@10 0.356 -> 0.327). bge-reranker-base is trained largely on web search
+  question-passage pairs; NFCorpus pairs short nutrition questions with medical abstracts.
+  The non-reranked fusion_hybrid scored best on NFCorpus, but it was not the pre-chosen
+  config, so that number is reported as an observation, not as the headline.
+- HyDE/fusion numbers on SciFact test differ slightly from round 1 (hyde_hybrid 0.780/0.694 ->
+  0.787/0.699): the LLM passages were regenerated on a different GPU (Colab vs Kaggle).
+- The 0.1-0.5 s/query reranking times in the train table are low because scores were cached
+  across depths and bases; the uncached test cost was ~1.8 s/query for the chosen config.
 
 ## Compression
 

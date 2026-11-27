@@ -1,0 +1,210 @@
+{
+  "rule": [
+    "Inputs: train runs (SciFact train, first 200 queries), one per reranker model, each with",
+    "the 4 base strategies x depths {20, 50, 100}. Rule: highest hit@5 (the pre-declared",
+    "primary metric); ties -> higher nDCG@10; then smaller depth; then the smaller reranker",
+    "(MiniLM before bge); then the cheaper base (dense, hybrid, hyde_hybrid, fusion_hybrid). Prints a table and a final line 'CHOICE <base> <depth> <reranker>'."
+  ],
+  "table": [
+    {
+      "base": "dense",
+      "depth": 20,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.825,
+      "ndcg@10": 0.7381202560786655,
+      "s_per_query": 0.6720051336288452
+    },
+    {
+      "base": "dense",
+      "depth": 50,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.835,
+      "ndcg@10": 0.7351385317032607,
+      "s_per_query": 0.9974925887584686
+    },
+    {
+      "base": "dense",
+      "depth": 100,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.835,
+      "ndcg@10": 0.7375565780187917,
+      "s_per_query": 1.6647536540031433
+    },
+    {
+      "base": "hybrid",
+      "depth": 20,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.83,
+      "ndcg@10": 0.7271046913149144,
+      "s_per_query": 0.06703991055488587
+    },
+    {
+      "base": "hybrid",
+      "depth": 50,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.85,
+      "ndcg@10": 0.7409601642536424,
+      "s_per_query": 0.3669345843791962
+    },
+    {
+      "base": "hybrid",
+      "depth": 100,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.83,
+      "ndcg@10": 0.7336878891169016,
+      "s_per_query": 0.8997607159614563
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 20,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.835,
+      "ndcg@10": 0.7329129923366235,
+      "s_per_query": 0.04939647197723389
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 50,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.845,
+      "ndcg@10": 0.7397870591451943,
+      "s_per_query": 0.07873188972473144
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 100,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.83,
+      "ndcg@10": 0.7322122555745894,
+      "s_per_query": 0.19354621767997743
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 20,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.845,
+      "ndcg@10": 0.741870230788706,
+      "s_per_query": 0.12483350157737733
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 50,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.85,
+      "ndcg@10": 0.7481363460490035,
+      "s_per_query": 0.16848158240318298
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 100,
+      "reranker": "BAAI/bge-reranker-base",
+      "hit@5": 0.83,
+      "ndcg@10": 0.7360368261202468,
+      "s_per_query": 0.517387866973877
+    },
+    {
+      "base": "dense",
+      "depth": 20,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7103650746539961,
+      "s_per_query": 0.13247524380683898
+    },
+    {
+      "base": "dense",
+      "depth": 50,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.785,
+      "ndcg@10": 0.7041113585937648,
+      "s_per_query": 0.20758550524711608
+    },
+    {
+      "base": "dense",
+      "depth": 100,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7116088395268133,
+      "s_per_query": 0.38280523419380186
+    },
+    {
+      "base": "hybrid",
+      "depth": 20,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.785,
+      "ndcg@10": 0.7038318433393584,
+      "s_per_query": 0.04488126873970032
+    },
+    {
+      "base": "hybrid",
+      "depth": 50,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.8,
+      "ndcg@10": 0.7168787229481424,
+      "s_per_query": 0.10088788151741028
+    },
+    {
+      "base": "hybrid",
+      "depth": 100,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7116797868034144,
+      "s_per_query": 0.21717614889144898
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 20,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.78,
+      "ndcg@10": 0.7073477041165647,
+      "s_per_query": 0.04598063468933106
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 50,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.795,
+      "ndcg@10": 0.7144640994781486,
+      "s_per_query": 0.05766809344291687
+    },
+    {
+      "base": "hyde_hybrid",
+      "depth": 100,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7117499119995627,
+      "s_per_query": 0.07340539813041687
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 20,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7189219381576689,
+      "s_per_query": 0.11687845230102539
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 50,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.8,
+      "ndcg@10": 0.7192871568845214,
+      "s_per_query": 0.1421882367134094
+    },
+    {
+      "base": "fusion_hybrid",
+      "depth": 100,
+      "reranker": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "hit@5": 0.79,
+      "ndcg@10": 0.7132144532177418,
+      "s_per_query": 0.19872443675994872
+    }
+  ],
+  "chosen": {
+    "base": "fusion_hybrid",
+    "depth": 50,
+    "reranker": "BAAI/bge-reranker-base",
+    "hit@5": 0.85,
+    "ndcg@10": 0.7481363460490035,
+    "s_per_query": 0.16848158240318298
+  }
+}

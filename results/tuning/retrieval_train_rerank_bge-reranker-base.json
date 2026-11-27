@@ -1,0 +1,724 @@
+{
+  "experiment": "retrieval",
+  "dataset": "scifact",
+  "split": "train",
+  "n_docs": 5183,
+  "n_queries": 200,
+  "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+  "llm": "qwen2.5:3b",
+  "reranker": "BAAI/bge-reranker-base",
+  "hyde_prompt": "claim",
+  "baseline": "dense",
+  "primary_metric": "hit@5",
+  "k": 10,
+  "settings": {
+    "n_queries": 3,
+    "hyde_samples": 1,
+    "rrf_k": 60,
+    "fusion_depth": 100
+  },
+  "index_build_seconds": 14.957881450653076,
+  "metrics": {
+    "dense": {
+      "hit@1": 0.55,
+      "recall@1": 0.5204166666666667,
+      "mrr@1": 0.55,
+      "ndcg@1": 0.55,
+      "hit@3": 0.7,
+      "recall@3": 0.6670833333333333,
+      "mrr@3": 0.6199999999999999,
+      "ndcg@3": 0.6205565209801995,
+      "hit@5": 0.765,
+      "recall@5": 0.7383333333333334,
+      "mrr@5": 0.6357499999999999,
+      "ndcg@5": 0.6521846480384791,
+      "hit@10": 0.82,
+      "recall@10": 0.8058333333333334,
+      "mrr@10": 0.6429900793650793,
+      "ndcg@10": 0.6750147416951409,
+      "n_queries": 200.0
+    },
+    "hybrid": {
+      "hit@1": 0.525,
+      "recall@1": 0.4954166666666666,
+      "mrr@1": 0.525,
+      "ndcg@1": 0.525,
+      "hit@3": 0.735,
+      "recall@3": 0.7116666666666666,
+      "mrr@3": 0.6208333333333332,
+      "ndcg@3": 0.63606993251511,
+      "hit@5": 0.785,
+      "recall@5": 0.7658333333333335,
+      "mrr@5": 0.6320833333333332,
+      "ndcg@5": 0.6589863124797577,
+      "hit@10": 0.84,
+      "recall@10": 0.82875,
+      "mrr@10": 0.639597222222222,
+      "ndcg@10": 0.6802242635020903,
+      "n_queries": 200.0
+    },
+    "hyde_hybrid": {
+      "hit@1": 0.54,
+      "recall@1": 0.5095833333333333,
+      "mrr@1": 0.54,
+      "ndcg@1": 0.54,
+      "hit@3": 0.725,
+      "recall@3": 0.7041666666666666,
+      "mrr@3": 0.6249999999999999,
+      "ndcg@3": 0.6382155318587097,
+      "hit@5": 0.8,
+      "recall@5": 0.785,
+      "mrr@5": 0.64225,
+      "ndcg@5": 0.6727750104586786,
+      "hit@10": 0.855,
+      "recall@10": 0.84625,
+      "mrr@10": 0.6505337301587304,
+      "ndcg@10": 0.6941346596729544,
+      "n_queries": 200.0
+    },
+    "fusion_hybrid": {
+      "hit@1": 0.59,
+      "recall@1": 0.5579166666666667,
+      "mrr@1": 0.59,
+      "ndcg@1": 0.59,
+      "hit@3": 0.735,
+      "recall@3": 0.7091666666666666,
+      "mrr@3": 0.6558333333333333,
+      "ndcg@3": 0.6591220487822782,
+      "hit@5": 0.79,
+      "recall@5": 0.7745833333333334,
+      "mrr@5": 0.6685833333333333,
+      "ndcg@5": 0.6866985335736565,
+      "hit@10": 0.85,
+      "recall@10": 0.83625,
+      "mrr@10": 0.6765178571428571,
+      "ndcg@10": 0.7077543115213983,
+      "n_queries": 200.0
+    },
+    "dense+rerank@20": {
+      "hit@1": 0.635,
+      "recall@1": 0.6070833333333333,
+      "mrr@1": 0.635,
+      "ndcg@1": 0.635,
+      "hit@3": 0.795,
+      "recall@3": 0.7679166666666666,
+      "mrr@3": 0.705,
+      "ndcg@3": 0.7123896955941719,
+      "hit@5": 0.825,
+      "recall@5": 0.8,
+      "mrr@5": 0.71175,
+      "ndcg@5": 0.7265773115281391,
+      "hit@10": 0.855,
+      "recall@10": 0.835,
+      "mrr@10": 0.7156309523809522,
+      "ndcg@10": 0.7381202560786655,
+      "n_queries": 200.0
+    },
+    "dense+rerank@50": {
+      "hit@1": 0.635,
+      "recall@1": 0.6045833333333334,
+      "mrr@1": 0.635,
+      "ndcg@1": 0.635,
+      "hit@3": 0.775,
+      "recall@3": 0.7504166666666666,
+      "mrr@3": 0.6933333333333332,
+      "ndcg@3": 0.699534044378052,
+      "hit@5": 0.835,
+      "recall@5": 0.8095833333333334,
+      "mrr@5": 0.7068333333333332,
+      "ndcg@5": 0.7244065604429902,
+      "hit@10": 0.86,
+      "recall@10": 0.84,
+      "mrr@10": 0.7103333333333332,
+      "ndcg@10": 0.7351385317032607,
+      "n_queries": 200.0
+    },
+    "dense+rerank@100": {
+      "hit@1": 0.63,
+      "recall@1": 0.6020833333333333,
+      "mrr@1": 0.63,
+      "ndcg@1": 0.63,
+      "hit@3": 0.775,
+      "recall@3": 0.7454166666666666,
+      "mrr@3": 0.6899999999999998,
+      "ndcg@3": 0.6951886931459091,
+      "hit@5": 0.835,
+      "recall@5": 0.8095833333333334,
+      "mrr@5": 0.70375,
+      "ndcg@5": 0.7224832960992473,
+      "hit@10": 0.875,
+      "recall@10": 0.8525,
+      "mrr@10": 0.7092063492063493,
+      "ndcg@10": 0.7375565780187917,
+      "n_queries": 200.0
+    },
+    "hybrid+rerank@20": {
+      "hit@1": 0.615,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.615,
+      "ndcg@1": 0.615,
+      "hit@3": 0.77,
+      "recall@3": 0.7441666666666665,
+      "mrr@3": 0.6799999999999998,
+      "ndcg@3": 0.688940069225314,
+      "hit@5": 0.83,
+      "recall@5": 0.8120833333333334,
+      "mrr@5": 0.6937499999999999,
+      "ndcg@5": 0.7184585451139311,
+      "hit@10": 0.855,
+      "recall@10": 0.83625,
+      "mrr@10": 0.6974642857142855,
+      "ndcg@10": 0.7271046913149144,
+      "n_queries": 200.0
+    },
+    "hybrid+rerank@50": {
+      "hit@1": 0.62,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.765,
+      "recall@3": 0.7354166666666666,
+      "mrr@3": 0.6816666666666665,
+      "ndcg@3": 0.6864979906816238,
+      "hit@5": 0.85,
+      "recall@5": 0.8245833333333334,
+      "mrr@5": 0.7001666666666664,
+      "ndcg@5": 0.723244795061631,
+      "hit@10": 0.895,
+      "recall@10": 0.875,
+      "mrr@10": 0.7067043650793647,
+      "ndcg@10": 0.7409601642536424,
+      "n_queries": 200.0
+    },
+    "hybrid+rerank@100": {
+      "hit@1": 0.62,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.755,
+      "recall@3": 0.7254166666666666,
+      "mrr@3": 0.6766666666666665,
+      "ndcg@3": 0.6801886931459094,
+      "hit@5": 0.83,
+      "recall@5": 0.8045833333333334,
+      "mrr@5": 0.6929166666666666,
+      "ndcg@5": 0.7128478506993768,
+      "hit@10": 0.885,
+      "recall@10": 0.865,
+      "mrr@10": 0.7006845238095236,
+      "ndcg@10": 0.7336878891169016,
+      "n_queries": 200.0
+    },
+    "hyde_hybrid+rerank@20": {
+      "hit@1": 0.62,
+      "recall@1": 0.5970833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.77,
+      "recall@3": 0.7491666666666665,
+      "mrr@3": 0.6833333333333331,
+      "ndcg@3": 0.693999299761945,
+      "hit@5": 0.835,
+      "recall@5": 0.8170833333333334,
+      "mrr@5": 0.6978333333333332,
+      "ndcg@5": 0.7225922397068143,
+      "hit@10": 0.865,
+      "recall@10": 0.84625,
+      "mrr@10": 0.7021984126984122,
+      "ndcg@10": 0.7329129923366235,
+      "n_queries": 200.0
+    },
+    "hyde_hybrid+rerank@50": {
+      "hit@1": 0.62,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.765,
+      "recall@3": 0.7354166666666666,
+      "mrr@3": 0.6808333333333333,
+      "ndcg@3": 0.6858433419137664,
+      "hit@5": 0.845,
+      "recall@5": 0.8195833333333334,
+      "mrr@5": 0.6983333333333331,
+      "ndcg@5": 0.7206558822576009,
+      "hit@10": 0.895,
+      "recall@10": 0.875,
+      "mrr@10": 0.7053373015873013,
+      "ndcg@10": 0.7397870591451943,
+      "n_queries": 200.0
+    },
+    "hyde_hybrid+rerank@100": {
+      "hit@1": 0.62,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.755,
+      "recall@3": 0.7254166666666666,
+      "mrr@3": 0.6766666666666665,
+      "ndcg@3": 0.6801886931459094,
+      "hit@5": 0.83,
+      "recall@5": 0.8045833333333334,
+      "mrr@5": 0.6929166666666666,
+      "ndcg@5": 0.7128478506993768,
+      "hit@10": 0.88,
+      "recall@10": 0.86,
+      "mrr@10": 0.7001626984126982,
+      "ndcg@10": 0.7322122555745894,
+      "n_queries": 200.0
+    },
+    "fusion_hybrid+rerank@20": {
+      "hit@1": 0.63,
+      "recall@1": 0.6045833333333334,
+      "mrr@1": 0.63,
+      "ndcg@1": 0.63,
+      "hit@3": 0.795,
+      "recall@3": 0.7754166666666665,
+      "mrr@3": 0.7008333333333333,
+      "ndcg@3": 0.7139225635760856,
+      "hit@5": 0.845,
+      "recall@5": 0.8258333333333334,
+      "mrr@5": 0.7115833333333331,
+      "ndcg@5": 0.7345865803057144,
+      "hit@10": 0.86,
+      "recall@10": 0.845,
+      "mrr@10": 0.713845238095238,
+      "ndcg@10": 0.741870230788706,
+      "n_queries": 200.0
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@1": 0.63,
+      "recall@1": 0.6020833333333333,
+      "mrr@1": 0.63,
+      "ndcg@1": 0.63,
+      "hit@3": 0.77,
+      "recall@3": 0.7454166666666666,
+      "mrr@3": 0.6908333333333334,
+      "ndcg@3": 0.6972118699861121,
+      "hit@5": 0.85,
+      "recall@5": 0.8245833333333334,
+      "mrr@5": 0.7083333333333331,
+      "ndcg@5": 0.7293837291042206,
+      "hit@10": 0.9,
+      "recall@10": 0.8775,
+      "mrr@10": 0.7155456349206346,
+      "ndcg@10": 0.7481363460490035,
+      "n_queries": 200.0
+    },
+    "fusion_hybrid+rerank@100": {
+      "hit@1": 0.62,
+      "recall@1": 0.5920833333333334,
+      "mrr@1": 0.62,
+      "ndcg@1": 0.62,
+      "hit@3": 0.76,
+      "recall@3": 0.7279166666666665,
+      "mrr@3": 0.6791666666666667,
+      "ndcg@3": 0.6818104739318528,
+      "hit@5": 0.83,
+      "recall@5": 0.8045833333333334,
+      "mrr@5": 0.6946666666666667,
+      "ndcg@5": 0.7140748268162049,
+      "hit@10": 0.89,
+      "recall@10": 0.87,
+      "mrr@10": 0.7026150793650792,
+      "ndcg@10": 0.7360368261202468,
+      "n_queries": 200.0
+    }
+  },
+  "vs_baseline": {
+    "hybrid": {
+      "hit@5_abs_points": 2.0000000000000018,
+      "hit@5_rel_pct": 2.614379084967333,
+      "ndcg@10_abs_points": 0.5209521806949446,
+      "ndcg@10_rel_pct": 0.7717641534564113,
+      "queries_won_vs_baseline": 12,
+      "queries_lost_vs_baseline": 8,
+      "mcnemar_p_hit@5": 0.5034446716308594
+    },
+    "hyde_hybrid": {
+      "hit@5_abs_points": 3.500000000000003,
+      "hit@5_rel_pct": 4.575163398692816,
+      "ndcg@10_abs_points": 1.9119917977813539,
+      "ndcg@10_rel_pct": 2.832518580231058,
+      "queries_won_vs_baseline": 14,
+      "queries_lost_vs_baseline": 7,
+      "mcnemar_p_hit@5": 0.18924713134765625
+    },
+    "fusion_hybrid": {
+      "hit@5_abs_points": 2.500000000000002,
+      "hit@5_rel_pct": 3.267973856209161,
+      "ndcg@10_abs_points": 3.2739569826257475,
+      "ndcg@10_rel_pct": 4.850200714733988,
+      "queries_won_vs_baseline": 15,
+      "queries_lost_vs_baseline": 10,
+      "mcnemar_p_hit@5": 0.42435622215270996
+    },
+    "dense+rerank@20": {
+      "hit@5_abs_points": 5.999999999999995,
+      "hit@5_rel_pct": 7.843137254901955,
+      "ndcg@10_abs_points": 6.310551438352463,
+      "ndcg@10_rel_pct": 9.348760921139277,
+      "queries_won_vs_baseline": 15,
+      "queries_lost_vs_baseline": 3,
+      "mcnemar_p_hit@5": 0.007537841796875
+    },
+    "dense+rerank@50": {
+      "hit@5_abs_points": 6.999999999999995,
+      "hit@5_rel_pct": 9.15032679738561,
+      "ndcg@10_abs_points": 6.012379000811984,
+      "ndcg@10_rel_pct": 8.907033623759553,
+      "queries_won_vs_baseline": 17,
+      "queries_lost_vs_baseline": 3,
+      "mcnemar_p_hit@5": 0.0025768280029296875
+    },
+    "dense+rerank@100": {
+      "hit@5_abs_points": 6.999999999999995,
+      "hit@5_rel_pct": 9.15032679738561,
+      "ndcg@10_abs_points": 6.254183632365084,
+      "ndcg@10_rel_pct": 9.265254884151375,
+      "queries_won_vs_baseline": 19,
+      "queries_lost_vs_baseline": 5,
+      "mcnemar_p_hit@5": 0.006610751152038574
+    },
+    "hybrid+rerank@20": {
+      "hit@5_abs_points": 6.499999999999995,
+      "hit@5_rel_pct": 8.496732026143782,
+      "ndcg@10_abs_points": 5.2089949619773535,
+      "ndcg@10_rel_pct": 7.716861040539924,
+      "queries_won_vs_baseline": 21,
+      "queries_lost_vs_baseline": 8,
+      "mcnemar_p_hit@5": 0.0241195447742939
+    },
+    "hybrid+rerank@50": {
+      "hit@5_abs_points": 8.499999999999996,
+      "hit@5_rel_pct": 11.111111111111116,
+      "ndcg@10_abs_points": 6.594542255850156,
+      "ndcg@10_rel_pct": 9.769478869882908,
+      "queries_won_vs_baseline": 21,
+      "queries_lost_vs_baseline": 4,
+      "mcnemar_p_hit@5": 0.0009105205535888672
+    },
+    "hybrid+rerank@100": {
+      "hit@5_abs_points": 6.499999999999995,
+      "hit@5_rel_pct": 8.496732026143782,
+      "ndcg@10_abs_points": 5.867314742176077,
+      "ndcg@10_rel_pct": 8.692128304400715,
+      "queries_won_vs_baseline": 18,
+      "queries_lost_vs_baseline": 5,
+      "mcnemar_p_hit@5": 0.010622024536132812
+    },
+    "hyde_hybrid+rerank@20": {
+      "hit@5_abs_points": 6.999999999999995,
+      "hit@5_rel_pct": 9.15032679738561,
+      "ndcg@10_abs_points": 5.7898250641482685,
+      "ndcg@10_rel_pct": 8.577331288511548,
+      "queries_won_vs_baseline": 22,
+      "queries_lost_vs_baseline": 8,
+      "mcnemar_p_hit@5": 0.016124801710247993
+    },
+    "hyde_hybrid+rerank@50": {
+      "hit@5_abs_points": 7.9999999999999964,
+      "hit@5_rel_pct": 10.457516339869265,
+      "ndcg@10_abs_points": 6.477231745005341,
+      "ndcg@10_rel_pct": 9.59568931596857,
+      "queries_won_vs_baseline": 20,
+      "queries_lost_vs_baseline": 4,
+      "mcnemar_p_hit@5": 0.001543879508972168
+    },
+    "hyde_hybrid+rerank@100": {
+      "hit@5_abs_points": 6.499999999999995,
+      "hit@5_rel_pct": 8.496732026143782,
+      "ndcg@10_abs_points": 5.719751387944849,
+      "ndcg@10_rel_pct": 8.473520702053161,
+      "queries_won_vs_baseline": 18,
+      "queries_lost_vs_baseline": 5,
+      "mcnemar_p_hit@5": 0.010622024536132812
+    },
+    "fusion_hybrid+rerank@20": {
+      "hit@5_abs_points": 7.9999999999999964,
+      "hit@5_rel_pct": 10.457516339869265,
+      "ndcg@10_abs_points": 6.685548909356509,
+      "ndcg@10_rel_pct": 9.904300597298544,
+      "queries_won_vs_baseline": 22,
+      "queries_lost_vs_baseline": 6,
+      "mcnemar_p_hit@5": 0.0037191659212112427
+    },
+    "fusion_hybrid+rerank@50": {
+      "hit@5_abs_points": 8.499999999999996,
+      "hit@5_rel_pct": 11.111111111111116,
+      "ndcg@10_abs_points": 7.312160435386261,
+      "ndcg@10_rel_pct": 10.832593695692472,
+      "queries_won_vs_baseline": 20,
+      "queries_lost_vs_baseline": 3,
+      "mcnemar_p_hit@5": 0.00048828125
+    },
+    "fusion_hybrid+rerank@100": {
+      "hit@5_abs_points": 6.499999999999995,
+      "hit@5_rel_pct": 8.496732026143782,
+      "ndcg@10_abs_points": 6.102208442510593,
+      "ndcg@10_rel_pct": 9.040111371769942,
+      "queries_won_vs_baseline": 18,
+      "queries_lost_vs_baseline": 5,
+      "mcnemar_p_hit@5": 0.010622024536132812
+    }
+  },
+  "seconds_per_query": {
+    "dense": 0.009763967990875245,
+    "hybrid": 0.0358967137336731,
+    "hyde_hybrid": 0.040920673608779906,
+    "fusion_hybrid": 0.12587337255477904,
+    "dense+rerank@20": 0.6720051336288452,
+    "dense+rerank@50": 0.9974925887584686,
+    "dense+rerank@100": 1.6647536540031433,
+    "hybrid+rerank@20": 0.06703991055488587,
+    "hybrid+rerank@50": 0.3669345843791962,
+    "hybrid+rerank@100": 0.8997607159614563,
+    "hyde_hybrid+rerank@20": 0.04939647197723389,
+    "hyde_hybrid+rerank@50": 0.07873188972473144,
+    "hyde_hybrid+rerank@100": 0.19354621767997743,
+    "fusion_hybrid+rerank@20": 0.12483350157737733,
+    "fusion_hybrid+rerank@50": 0.16848158240318298,
+    "fusion_hybrid+rerank@100": 0.517387866973877
+  },
+  "llm_calls_made": 0,
+  "rerank_pairs_scored": 30677,
+  "examples": {
+    "dense": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "29638116",
+        "4346436",
+        "17388232"
+      ],
+      "relevant": [
+        "31715818"
+      ]
+    },
+    "hybrid": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "40212412",
+        "43385013",
+        "803312"
+      ],
+      "relevant": [
+        "31715818"
+      ]
+    },
+    "hyde_hybrid": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "10607877",
+        "40212412",
+        "6863070"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Lack Inductive Properties\n\nIn the realm of biomaterials research, the concept of dimensionality plays a crucial role in understanding their interactions with biological systems. The term \"0-dimensional\" biomaterials typically refers to entities that are essentially point-like or atomically precise structures, such as nanoparticles or single molecules. These materials are characterized by their extremely small size, often measured in nanometers, and their ability to interact with biological systems at the molecular level.\n\nInductive properties, in the context of biomaterials, generally refer to the ability of a material to influence or control biological processes, such as cell adhesion, proliferation, and differentiation. For 0-dimensional biomaterials, their inductive properties are significantly limited due to their intrinsic nature. The primary reason for this limitation is the absence of a defined surface area or interface, which are essential for mediating interactions with biological components. In a 0-dimensional state, the material is essentially a single point or atom, devoid of any physical or chemical properties that could be exploited for inducing biological responses.\n\nFurthermore, the interaction between 0-dimensional biomaterials and biological systems is predominantly governed by physical forces such as van der Waals forces, electrostatic interactions, and steric hindrance. These interactions are generally weak and transient, making it challenging for 0-dimensional materials to exert significant inductive effects. The lack of a defined surface also means that 0-dimensional biomaterials cannot form stable complexes with biological molecules, such as proteins or nucleic acids, which are often required for inducing specific biological responses.\n\nMoreover, the inherent instability of 0-dimensional materials further exacerbates their inability to exhibit inductive properties. These materials are often subject to rapid diffusion and aggregation, making it difficult to maintain a stable and controlled environment for biological interactions. This instability can lead to premature degradation or loss of functionality, further diminishing their potential for inducing biological responses.\n\nIn conclusion, the inductive properties of 0-dimensional biomaterials are severely limited due to their intrinsic nature as point-like or atomically precise entities. The absence of a defined surface area and the reliance on weak physical interactions make it challenging for these materials to exert significant influence on biological processes. Therefore, the claim that 0-dimensional biomaterials lack inductive properties is well-supported by the current understanding of their fundamental characteristics and interactions with biological systems."
+      ]
+    },
+    "fusion_hybrid": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "803312",
+        "43385013",
+        "25404036"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials lack inductive properties.",
+        "0-dimensional materials do not exhibit inducibility.",
+        "Inductive properties are absent in 0-dimensional biomaterials.",
+        "0-dimensional materials do not possess inducibility characteristics."
+      ]
+    },
+    "dense+rerank@20": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "7583104",
+        "23686039"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 20
+    },
+    "dense+rerank@50": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "32532238",
+        "4784069"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 50
+    },
+    "dense+rerank@100": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "14103509",
+        "10982689"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 100
+    },
+    "hybrid+rerank@20": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "28138927",
+        "803312"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 20
+    },
+    "hybrid+rerank@50": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "10931595",
+        "28138927"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 50
+    },
+    "hybrid+rerank@100": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "10931595"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "rerank_depth": 100
+    },
+    "hyde_hybrid+rerank@20": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "10931595",
+        "28138927"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Lack Inductive Properties\n\nIn the realm of biomaterials research, the concept of dimensionality plays a crucial role in understanding their interactions with biological systems. The term \"0-dimensional\" biomaterials typically refers to entities that are essentially point-like or atomically precise structures, such as nanoparticles or single molecules. These materials are characterized by their extremely small size, often measured in nanometers, and their ability to interact with biological systems at the molecular level.\n\nInductive properties, in the context of biomaterials, generally refer to the ability of a material to influence or control biological processes, such as cell adhesion, proliferation, and differentiation. For 0-dimensional biomaterials, their inductive properties are significantly limited due to their intrinsic nature. The primary reason for this limitation is the absence of a defined surface area or interface, which are essential for mediating interactions with biological components. In a 0-dimensional state, the material is essentially a single point or atom, devoid of any physical or chemical properties that could be exploited for inducing biological responses.\n\nFurthermore, the interaction between 0-dimensional biomaterials and biological systems is predominantly governed by physical forces such as van der Waals forces, electrostatic interactions, and steric hindrance. These interactions are generally weak and transient, making it challenging for 0-dimensional materials to exert significant inductive effects. The lack of a defined surface also means that 0-dimensional biomaterials cannot form stable complexes with biological molecules, such as proteins or nucleic acids, which are often required for inducing specific biological responses.\n\nMoreover, the inherent instability of 0-dimensional materials further exacerbates their inability to exhibit inductive properties. These materials are often subject to rapid diffusion and aggregation, making it difficult to maintain a stable and controlled environment for biological interactions. This instability can lead to premature degradation or loss of functionality, further diminishing their potential for inducing biological responses.\n\nIn conclusion, the inductive properties of 0-dimensional biomaterials are severely limited due to their intrinsic nature as point-like or atomically precise entities. The absence of a defined surface area and the reliance on weak physical interactions make it challenging for these materials to exert significant influence on biological processes. Therefore, the claim that 0-dimensional biomaterials lack inductive properties is well-supported by the current understanding of their fundamental characteristics and interactions with biological systems."
+      ],
+      "rerank_depth": 20
+    },
+    "hyde_hybrid+rerank@50": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "10982689",
+        "10931595"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Lack Inductive Properties\n\nIn the realm of biomaterials research, the concept of dimensionality plays a crucial role in understanding their interactions with biological systems. The term \"0-dimensional\" biomaterials typically refers to entities that are essentially point-like or atomically precise structures, such as nanoparticles or single molecules. These materials are characterized by their extremely small size, often measured in nanometers, and their ability to interact with biological systems at the molecular level.\n\nInductive properties, in the context of biomaterials, generally refer to the ability of a material to influence or control biological processes, such as cell adhesion, proliferation, and differentiation. For 0-dimensional biomaterials, their inductive properties are significantly limited due to their intrinsic nature. The primary reason for this limitation is the absence of a defined surface area or interface, which are essential for mediating interactions with biological components. In a 0-dimensional state, the material is essentially a single point or atom, devoid of any physical or chemical properties that could be exploited for inducing biological responses.\n\nFurthermore, the interaction between 0-dimensional biomaterials and biological systems is predominantly governed by physical forces such as van der Waals forces, electrostatic interactions, and steric hindrance. These interactions are generally weak and transient, making it challenging for 0-dimensional materials to exert significant inductive effects. The lack of a defined surface also means that 0-dimensional biomaterials cannot form stable complexes with biological molecules, such as proteins or nucleic acids, which are often required for inducing specific biological responses.\n\nMoreover, the inherent instability of 0-dimensional materials further exacerbates their inability to exhibit inductive properties. These materials are often subject to rapid diffusion and aggregation, making it difficult to maintain a stable and controlled environment for biological interactions. This instability can lead to premature degradation or loss of functionality, further diminishing their potential for inducing biological responses.\n\nIn conclusion, the inductive properties of 0-dimensional biomaterials are severely limited due to their intrinsic nature as point-like or atomically precise entities. The absence of a defined surface area and the reliance on weak physical interactions make it challenging for these materials to exert significant influence on biological processes. Therefore, the claim that 0-dimensional biomaterials lack inductive properties is well-supported by the current understanding of their fundamental characteristics and interactions with biological systems."
+      ],
+      "rerank_depth": 50
+    },
+    "hyde_hybrid+rerank@100": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "10982689"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "hyde_passages": [
+        "### Passage: Supporting the Claim that 0-Dimensional Biomaterials Lack Inductive Properties\n\nIn the realm of biomaterials research, the concept of dimensionality plays a crucial role in understanding their interactions with biological systems. The term \"0-dimensional\" biomaterials typically refers to entities that are essentially point-like or atomically precise structures, such as nanoparticles or single molecules. These materials are characterized by their extremely small size, often measured in nanometers, and their ability to interact with biological systems at the molecular level.\n\nInductive properties, in the context of biomaterials, generally refer to the ability of a material to influence or control biological processes, such as cell adhesion, proliferation, and differentiation. For 0-dimensional biomaterials, their inductive properties are significantly limited due to their intrinsic nature. The primary reason for this limitation is the absence of a defined surface area or interface, which are essential for mediating interactions with biological components. In a 0-dimensional state, the material is essentially a single point or atom, devoid of any physical or chemical properties that could be exploited for inducing biological responses.\n\nFurthermore, the interaction between 0-dimensional biomaterials and biological systems is predominantly governed by physical forces such as van der Waals forces, electrostatic interactions, and steric hindrance. These interactions are generally weak and transient, making it challenging for 0-dimensional materials to exert significant inductive effects. The lack of a defined surface also means that 0-dimensional biomaterials cannot form stable complexes with biological molecules, such as proteins or nucleic acids, which are often required for inducing specific biological responses.\n\nMoreover, the inherent instability of 0-dimensional materials further exacerbates their inability to exhibit inductive properties. These materials are often subject to rapid diffusion and aggregation, making it difficult to maintain a stable and controlled environment for biological interactions. This instability can lead to premature degradation or loss of functionality, further diminishing their potential for inducing biological responses.\n\nIn conclusion, the inductive properties of 0-dimensional biomaterials are severely limited due to their intrinsic nature as point-like or atomically precise entities. The absence of a defined surface area and the reliance on weak physical interactions make it challenging for these materials to exert significant influence on biological processes. Therefore, the claim that 0-dimensional biomaterials lack inductive properties is well-supported by the current understanding of their fundamental characteristics and interactions with biological systems."
+      ],
+      "rerank_depth": 100
+    },
+    "fusion_hybrid+rerank@20": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "803312"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials lack inductive properties.",
+        "0-dimensional materials do not exhibit inducibility.",
+        "Inductive properties are absent in 0-dimensional biomaterials.",
+        "0-dimensional materials do not possess inducibility characteristics."
+      ],
+      "rerank_depth": 20
+    },
+    "fusion_hybrid+rerank@50": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "10931595"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials lack inductive properties.",
+        "0-dimensional materials do not exhibit inducibility.",
+        "Inductive properties are absent in 0-dimensional biomaterials.",
+        "0-dimensional materials do not possess inducibility characteristics."
+      ],
+      "rerank_depth": 50
+    },
+    "fusion_hybrid+rerank@100": {
+      "query": "0-dimensional biomaterials lack inductive properties.",
+      "top3": [
+        "4346436",
+        "38037690",
+        "14103509"
+      ],
+      "relevant": [
+        "31715818"
+      ],
+      "queries": [
+        "0-dimensional biomaterials lack inductive properties.",
+        "0-dimensional materials do not exhibit inducibility.",
+        "Inductive properties are absent in 0-dimensional biomaterials.",
+        "0-dimensional materials do not possess inducibility characteristics."
+      ],
+      "rerank_depth": 100
+    }
+  },
+  "env": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "numpy": "2.1.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.20.2",
+    "sentence-transformers": "5.7.0",
+    "onnx": "1.23.2",
+    "langgraph": "1.2.17",
+    "langchain-core": "1.7.0",
+    "langchain-ollama": "1.2.0",
+    "rank-bm25": "0.2.2",
+    "cuda_device": "Tesla T4"
+  }
+}
