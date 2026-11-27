@@ -40,7 +40,7 @@ def main() -> None:
         d = load(p)
         s = d["summary"]
         lo, hi = s["strict_95ci"]
-        lines += [f"## ReAct agent: `{d['model']}`",
+        lines += [f"## ReAct agent: `{d['model']}` on the {s.get('split', 'test')} set ({s['n_tasks']} tasks)",
                   f"- Strict success: **{s['strict_success_count']}/{s['n_runs']} = {100 * s['strict_success']:.1f}%** "
                   f"(95% CI {100 * lo:.0f}-{100 * hi:.0f}%)",
                   f"- Lenient success (any number correct): {100 * s['lenient_success']:.1f}%",
