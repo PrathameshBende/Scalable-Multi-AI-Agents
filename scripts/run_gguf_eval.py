@@ -52,6 +52,13 @@ def build_llama_cpp(root: str) -> str:
         # sm_75 = Tesla T4; building one architecture keeps compile time down.
         flags += ["-DGGML_CUDA=ON", "-DCMAKE_CUDA_ARCHITECTURES=75",
                   "-DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc"]
+        # CMake needs libcuda.so (CUDA::cuda_driver). Kaggle keeps it in /usr/local/nvidia/lib64,
+        # which CMake does not search, so point it at whichever of these folders has it.
+        lib_dirs = [d for d in ("/usr/local/cuda/lib64/stubs", "/usr/local/nvidia/lib64",
+                                "/usr/lib/x86_64-linux-gnu", "/usr/lib64")
+                    if os.path.exists(os.path.join(d, "libcuda.so"))]
+        if lib_dirs:
+            flags.append("-DCMAKE_LIBRARY_PATH=" + ";".join(lib_dirs))
     sh(["cmake", "-B", "build", *flags], cwd=root)
     sh(["cmake", "--build", "build", "--config", "Release", "-j", str(os.cpu_count() or 2),
         "--target", "llama-quantize", "llama-perplexity"], cwd=root)
