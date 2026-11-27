@@ -28,10 +28,13 @@ def sentence_transformer_embedder(
     return embed
 
 
-def ollama_chat_model(model: str, temperature: float = 0.0, num_ctx: int = 4096, seed: int = 0):
+def ollama_chat_model(model: str, temperature: float = 0.0, num_ctx: int = 4096, seed: int = 0,
+                      num_predict: int = 1024):
     from langchain_ollama import ChatOllama
 
-    return ChatOllama(model=model, temperature=temperature, num_ctx=num_ctx, seed=seed)
+    # num_predict caps one reply; without it a model can loop for many minutes (qwen2.5:14b did).
+    return ChatOllama(model=model, temperature=temperature, num_ctx=num_ctx, seed=seed,
+                      num_predict=num_predict)
 
 
 class CachedGenerator:
