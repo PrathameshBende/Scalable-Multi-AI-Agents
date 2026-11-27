@@ -1,0 +1,53 @@
+{
+  "experiment": "gguf_llm",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "hf_safetensors_mb": 988.097824,
+  "ctx": 512,
+  "hellaswag_tasks": 2000,
+  "llama_cpp_commit": "e7ec6361dc3c57ca6ffb773c750daaa90196b1c5",
+  "variants": {
+    "F16": {
+      "size_mb": 994.157152,
+      "ppl": 14.9886,
+      "ppl_stderr": 0.11265,
+      "hellaswag": {
+        "tasks": 2000,
+        "acc": 51.2,
+        "ci_low": 49.0091,
+        "ci_high": 53.3863
+      }
+    },
+    "Q8_0": {
+      "size_mb": 531.068512,
+      "ppl": 15.0353,
+      "ppl_stderr": 0.11309,
+      "hellaswag": {
+        "tasks": 2000,
+        "acc": 51.05,
+        "ci_low": 48.8593,
+        "ci_high": 53.2367
+      },
+      "vs_f16": {
+        "size_reduction_pct": 46.58102987725626,
+        "ppl_increase_pct": 0.31157012662956785,
+        "hellaswag_abs_points": -0.15000000000000568
+      }
+    },
+    "Q4_K_M": {
+      "size_mb": 397.808224,
+      "ppl": 15.3468,
+      "ppl_stderr": 0.11507,
+      "hellaswag": {
+        "tasks": 2000,
+        "acc": 50.5,
+        "ci_low": 48.3099,
+        "ci_high": 52.6881
+      },
+      "vs_f16": {
+        "size_reduction_pct": 59.985378247321606,
+        "ppl_increase_pct": 2.38981626035788,
+        "hellaswag_abs_points": -0.7000000000000028
+      }
+    }
+  }
+}

@@ -90,6 +90,10 @@ def main() -> None:
     os.makedirs(args.workdir, exist_ok=True)
     llama = os.path.abspath(os.path.join(args.workdir, "llama.cpp"))
     bin_dir = build_llama_cpp(llama)
+    # Load WikiText (imports datasets/pandas/numpy) BEFORE the pip install below: that install
+    # can upgrade numpy on disk, and importing datasets afterwards in this same process then
+    # fails with "numpy.ufunc has no attribute __qualname__" (happened on Kaggle).
+    wiki = wikitext_file(os.path.join(args.workdir, "wiki.test.raw"))
     sh([sys.executable, "-m", "pip", "install", "-q", os.path.join(llama, "gguf-py"),
         "sentencepiece", "protobuf", "mistral-common"])
 
@@ -111,7 +115,6 @@ def main() -> None:
                log=os.path.join(args.workdir, f"quantize_{q}.log"))
         files[q] = path
 
-    wiki = wikitext_file(os.path.join(args.workdir, "wiki.test.raw"))
     hs = os.path.join(args.workdir, "hellaswag_val_full.txt")
     if not os.path.exists(hs):
         urllib.request.urlretrieve(HELLASWAG_URL, hs)

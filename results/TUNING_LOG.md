@@ -128,7 +128,10 @@ What reranking showed:
 |---|---|---|
 | 1 | ONNX export of all-MiniLM-L6-v2 (fp32) | identical retrieval to PyTorch (cosine 1.0000) |
 | 2 | ONNX dynamic int8 | 90.4 -> 22.9 MB (-74.9%); nDCG@10 -0.97% relative; **hit@5 -3.0 pts** |
-| 3 | GGUF (llama.cpp) | not finished: CUDA build too slow on Colab's 2 CPU cores |
+| 3 | GGUF (llama.cpp), Colab | not finished: CUDA build too slow on Colab's 2 CPU cores |
+| 4 | GGUF, Kaggle T4 (4 cores): CMake could not find `libcuda.so` (Kaggle keeps it in `/usr/local/nvidia/lib64`); script now passes `CMAKE_LIBRARY_PATH` | build OK after ~35 min |
+| 5 | Same run crashed after quantizing: the script's own `pip install` upgraded numpy mid-process, then `import datasets` failed (`numpy.ufunc has no attribute __qualname__`). Re-run in a fresh process (resumes from saved files); script now loads WikiText before the install | - |
+| 6 | Final: Qwen2.5-0.5B-Instruct, F16 vs Q8_0 vs Q4_K_M, WikiText-2 PPL (ctx 512) + HellaSwag (2000 tasks) | **Q8_0: -46.6% size, PPL +0.31%, HellaSwag -0.15 pts**; Q4_K_M: -60.0% size, PPL +2.39%, HellaSwag -0.70 pts. HellaSwag gaps are inside the 95% CI. No settings were changed after seeing results. |
 
 ## Infrastructure problems hit on Colab (not tuning, but part of the story)
 

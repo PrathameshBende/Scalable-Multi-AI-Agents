@@ -1,0 +1,20 @@
+$ /usr/bin/python3 -m pip install -q /kaggle/working/r2/work/gguf/llama.cpp/gguf-py sentencepiece protobuf mistral-common
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 1285.57it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generating test split:   0%|          | 0/4358 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 4358/4358 [00:00<00:00, 169393.80 examples/s]
+Generating train split:   0%|          | 0/36718 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 36718/36718 [00:00<00:00, 724017.35 examples/s]
+Generating validation split:   0%|          | 0/3760 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 3760/3760 [00:00<00:00, 642674.23 examples/s]
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-F16.gguf -f work/gguf/wiki.test.raw -c 512 -ngl 99
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-F16.gguf -f work/gguf/hellaswag_val_full.txt --hellaswag --hellaswag-tasks 2000 -c 512 -ngl 99
+    F16:   994.2 MB  PPL 14.989  HellaSwag 51.20%
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-Q8_0.gguf -f work/gguf/wiki.test.raw -c 512 -ngl 99
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-Q8_0.gguf -f work/gguf/hellaswag_val_full.txt --hellaswag --hellaswag-tasks 2000 -c 512 -ngl 99
+   Q8_0:   531.1 MB  PPL 15.035  HellaSwag 51.05%
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf -f work/gguf/wiki.test.raw -c 512 -ngl 99
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-perplexity -m work/gguf/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf -f work/gguf/hellaswag_val_full.txt --hellaswag --hellaswag-tasks 2000 -c 512 -ngl 99
+ Q4_K_M:   397.8 MB  PPL 15.347  HellaSwag 50.50%
+Q8_0 vs F16: size -46.6%, PPL +0.31%, HellaSwag -0.15 pts
+Q4_K_M vs F16: size -60.0%, PPL +2.39%, HellaSwag -0.70 pts
+$ git rev-parse HEAD
+wrote results/gguf.json
+GGUF_EXIT 0

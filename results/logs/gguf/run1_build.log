@@ -1,0 +1,46 @@
+$ cmake -B build -DLLAMA_CURL=OFF -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc -DCMAKE_LIBRARY_PATH=/usr/local/nvidia/lib64
+$ cmake --build build --config Release -j 4 --target llama-quantize llama-perplexity
+$ /usr/bin/python3 -m pip install -q /kaggle/working/r2/work/gguf/llama.cpp/gguf-py sentencepiece protobuf mistral-common
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 10 files:  10%|█         | 1/10 [00:00<00:00,  9.08it/s]Fetching 10 files:  70%|███████   | 7/10 [00:00<00:00, 37.77it/s]Fetching 10 files: 100%|██████████| 10/10 [00:07<00:00,  1.27it/s]
+$ /usr/bin/python3 /kaggle/working/r2/work/gguf/llama.cpp/convert_hf_to_gguf.py /root/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775 --outtype f16 --outfile work/gguf/Qwen2.5-0.5B-Instruct-F16.gguf
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-quantize work/gguf/Qwen2.5-0.5B-Instruct-F16.gguf work/gguf/Qwen2.5-0.5B-Instruct-Q8_0.gguf Q8_0
+$ /kaggle/working/r2/work/gguf/llama.cpp/build/bin/llama-quantize work/gguf/Qwen2.5-0.5B-Instruct-F16.gguf work/gguf/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf Q4_K_M
+Traceback (most recent call last):
+  File "/kaggle/working/r2/scripts/run_gguf_eval.py", line 156, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/r2/scripts/run_gguf_eval.py", line 114, in main
+    wiki = wikitext_file(os.path.join(args.workdir, "wiki.test.raw"))
+  File "/kaggle/working/r2/scripts/run_gguf_eval.py", line 70, in wikitext_file
+    from datasets import load_dataset
+  File "/usr/local/lib/python3.13/dist-packages/datasets/__init__.py", line 17, in <module>
+    from .arrow_dataset import Column, Dataset
+  File "/usr/local/lib/python3.13/dist-packages/datasets/arrow_dataset.py", line 58, in <module>
+    import pandas as pd
+  File "/usr/local/lib/python3.13/dist-packages/pandas/__init__.py", line 49, in <module>
+    from pandas.core.api import (
+    ...<62 lines>...
+    )
+  File "/usr/local/lib/python3.13/dist-packages/pandas/core/api.py", line 23, in <module>
+    from pandas.core.algorithms import (
+    ...<3 lines>...
+    )
+  File "/usr/local/lib/python3.13/dist-packages/pandas/core/algorithms.py", line 77, in <module>
+    from pandas.core.array_algos.take import take_nd
+  File "/usr/local/lib/python3.13/dist-packages/pandas/core/array_algos/take.py", line 24, in <module>
+    from pandas.core.construction import ensure_wrapped_if_datetimelike
+  File "/usr/local/lib/python3.13/dist-packages/pandas/core/construction.py", line 20, in <module>
+    from numpy import ma
+  File "/usr/local/lib/python3.13/dist-packages/numpy/ma/__init__.py", line 42, in <module>
+    from . import core, extras
+  File "/usr/local/lib/python3.13/dist-packages/numpy/ma/core.py", line 1259, in <module>
+    exp = _MaskedUnaryOperation(umath.exp)
+  File "/usr/local/lib/python3.13/dist-packages/numpy/ma/core.py", line 982, in __init__
+    super().__init__(mufunc)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/numpy/ma/core.py", line 957, in __init__
+    self.__qualname__ = ufunc.__qualname__
+                        ^^^^^^^^^^^^^^^^^^
+AttributeError: 'numpy.ufunc' object has no attribute '__qualname__'
+GGUF_EXIT 1

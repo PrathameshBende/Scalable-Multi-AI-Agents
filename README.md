@@ -61,7 +61,7 @@ Full tables: `results/SUMMARY.md`. Every change made after seeing a number: `res
 | Retrieval, NFCorpus test (323 q, held out) | Same reranked pipeline: nDCG@10 +3.4%, hit@5 +1.5 pts over dense; **worse than the same pipeline without reranking** (+12.3% nDCG@10). The reranker gain did not transfer. |
 | ReAct agent, qwen2.5:7b | Round 1: **60.0%** (18/30) on 30 fresh tasks. Round 2, after redesigning the shipping tool so the tool (not the model) multiplies unit weight by quantity: **86.7%** (26/30, 95% CI 70-95%) on 30 new tasks run once. Self-consistency voting (3 or 5 samples) added nothing on 42 dev tasks. |
 | ONNX int8 embedder | 90.4 -> 22.9 MB (**-74.9%**); nDCG@10 -0.97% relative, hit@5 -3.0 pts |
-| GGUF | not finished (llama.cpp CUDA build too slow on Colab's 2 CPU cores) |
+| GGUF (Qwen2.5-0.5B, llama.cpp) | Q8_0: 994 -> 531 MB (**-46.6%**), WikiText-2 perplexity **+0.31%**, HellaSwag -0.15 pts. Q4_K_M: **-60.0%** size, perplexity +2.39%, HellaSwag -0.70 pts |
 
 ## Known limitations
 

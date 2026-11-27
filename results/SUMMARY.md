@@ -81,5 +81,14 @@ mostly currency (wrong amount converted) and one storage-fee task that looped to
 - onnx_int8 vs PyTorch: size -74.9%, speed x1.18, nDCG@10 -0.97% rel, hit@5 -3.00 pts (mean cosine 0.937)
 - Speed numbers are unreliable: a llama.cpp compile was competing for the 2 CPU cores during part of this run.
 
-## GGUF LLM
-Not finished: the llama.cpp CUDA build had not completed at the time of writing.
+## GGUF LLM (`Qwen/Qwen2.5-0.5B-Instruct`, llama.cpp `e7ec636`, Kaggle T4, ctx 512)
+
+| variant | size MB | WikiText-2 PPL | HellaSwag acc % (2000 tasks, 95% CI) |
+|---|---|---|---|
+| F16 (reference) | 994 | 14.989 +/- 0.113 | 51.20 (49.0-53.4) |
+| Q8_0 | 531 | 15.035 +/- 0.113 | 51.05 (48.9-53.2) |
+| Q4_K_M | 398 | 15.347 +/- 0.115 | 50.50 (48.3-52.7) |
+- Q8_0 vs F16: size -46.6%, PPL +0.31%, HellaSwag -0.15 pts
+- Q4_K_M vs F16: size -60.0%, PPL +2.39%, HellaSwag -0.70 pts
+- HellaSwag differences are inside the confidence intervals (not significant).
+
