@@ -71,3 +71,15 @@ def test_grading():
     assert parse_final_answer("no answer") is None
     assert all_numbers("a -2 and 3.5") == [-2.0, 3.5]
     assert close(100.9, 100) and not close(102, 100)
+
+
+def test_fresh_tasks_are_new_balanced_and_reproducible():
+    from scalable_agents.tasks import DEV_TASKS, FRESH_TASKS, make_fresh_tasks
+
+    assert len(FRESH_TASKS) == 30
+    cats = [t.category for t in FRESH_TASKS]
+    assert [cats.count(c) for c in ("lookup", "shipping", "currency", "mixed")] == [8, 8, 7, 7]
+    old = {t.question for t in TASKS} | {t.question for t in DEV_TASKS}
+    assert not old & {t.question for t in FRESH_TASKS}
+    assert [t.question for t in make_fresh_tasks()] == [t.question for t in FRESH_TASKS]
+    assert all(math.isfinite(t.expected) for t in FRESH_TASKS)

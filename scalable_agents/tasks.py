@@ -16,6 +16,7 @@ import re
 from dataclasses import dataclass
 from typing import Callable
 
+from .tools import PRODUCTS as PRODUCTS_FOR_TASKS
 from .tools import (
     convert_currency as cc,
     customer_discount as disc,
@@ -150,6 +151,85 @@ DEV_TASKS: list[Task] = [
          lambda: _price("vega headphones", 2) * (1 - disc("gold")) + ship("east", _weight("vega headphones", 2)), 5),
 ]
 
+def make_fresh_tasks(seed: int = 2026) -> list[Task]:
+    """30 NEW tasks from templates, generated after all tuning was finished.
+
+    The original TASKS were looked at while debugging the harness, so the final agent
+    number is reported on these instead: same four categories, random products,
+    quantities, regions, currencies, tiers and dates (fixed seed, so reproducible).
+    """
+    import random
+
+    rng = random.Random(seed)
+    names = sorted(PRODUCTS_FOR_TASKS)
+    regions = ["north", "south", "east", "west", "international"]
+    currencies = ["INR", "EUR", "GBP", "JPY"]
+    tiers = ["silver", "gold"]
+    seen = {t.question for t in TASKS} | {t.question for t in DEV_TASKS}
+    out: list[Task] = []
+
+    def add(cat, q, fn, k):
+        if q not in seen:
+            seen.add(q)
+            out.append(Task(f"F{len(out) + 1:02d}", cat, q, fn, k))
+
+    def n(cat):
+        return sum(t.category == cat for t in out)
+
+    while n("lookup") < 8:
+        a, b = rng.sample(names, 2)
+        q = rng.randint(2, 15)
+        form = rng.randrange(3)
+        if form == 0:
+            add("lookup", f"What is the total price in USD of {q} {a.title()} units?",
+                lambda a=a, q=q: _price(a, q), 2)
+        elif form == 1:
+            add("lookup", f"An order of {q} {a.title()} units is shipped out. How many {a.title()} units remain in stock?",
+                lambda a=a, q=q: p(a)["stock"] - q, 2)
+        else:
+            add("lookup", f"What is the total price in USD of {q} {a.title()} units and one {b.title()}?",
+                lambda a=a, b=b, q=q: _price(a, q) + _price(b), 3)
+    while n("shipping") < 8:
+        a = rng.choice(names)
+        q = rng.randint(1, 9)
+        r = rng.choice(regions)
+        if rng.random() < 0.5:
+            add("shipping", f"How much does it cost in USD to ship {q} {a.title()} units to the {r} region?",
+                lambda a=a, q=q, r=r: ship(r, _weight(a, q)), 3)
+        else:
+            add("shipping", f"What is the total cost in USD (item price plus shipping) of {q} {a.title()} units shipped to the {r} region?",
+                lambda a=a, q=q, r=r: _price(a, q) + ship(r, _weight(a, q)), 4)
+    while n("currency") < 7:
+        a = rng.choice(names)
+        q = rng.randint(1, 6)
+        c = rng.choice(currencies)
+        if rng.random() < 0.5:
+            add("currency", f"What is the total price of {q} {a.title()} units in {c}?",
+                lambda a=a, q=q, c=c: cc(_price(a, q), "USD", c), 3)
+        else:
+            r = rng.choice(regions)
+            add("currency", f"What is the cost in {c} of shipping {q} {a.title()} units to the {r} region?",
+                lambda a=a, q=q, c=c, r=r: cc(ship(r, _weight(a, q)), "USD", c), 4)
+    while n("mixed") < 7:
+        a = rng.choice(names)
+        q = rng.randint(2, 8)
+        form = rng.randrange(3)
+        if form == 0:
+            t = rng.choice(tiers)
+            add("mixed", f"A {t}-tier customer buys {q} {a.title()} units. What do they pay in USD after their tier discount?",
+                lambda a=a, q=q, t=t: _price(a, q) * (1 - disc(t)), 3)
+        elif form == 1:
+            t, r = rng.choice(tiers), rng.choice(regions)
+            add("mixed", f"A {t}-tier customer buys {q} {a.title()} units shipped to the {r} region. The discount applies to items only, not shipping. What is the total in USD?",
+                lambda a=a, q=q, t=t, r=r: _price(a, q) * (1 - disc(t)) + ship(r, _weight(a, q)), 5)
+        else:
+            d1, d2 = sorted(rng.sample(range(1, 29), 2))
+            s1, s2 = f"2025-08-{d1:02d}", f"2025-08-{d2:02d}"
+            add("mixed", f"{q} {a.title()} units are stored at their warehouse from {s1} to {s2}. Using that warehouse's per-unit daily storage fee and the number of days between those dates, what is the total storage cost in USD?",
+                lambda a=a, q=q, s1=s1, s2=s2: q * days(s1, s2) * _fee(a), 4)
+    return out
+
+
 _FINAL = re.compile(r"final answer\s*[:=]\s*(.+)", re.IGNORECASE)
 _NUM = re.compile(r"-?\d[\d,]*(?:\.\d+)?|-?\.\d+")
 
@@ -187,3 +267,6 @@ def grade(task: Task, reply: str) -> dict:
         "strict": close(final, exp),
         "lenient": any(close(v, exp) for v in all_numbers(reply)),
     }
+
+
+FRESH_TASKS: list[Task] = make_fresh_tasks()

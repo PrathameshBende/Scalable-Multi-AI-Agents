@@ -19,7 +19,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scalable_agents.metrics import wilson_interval  # noqa: E402
-from scalable_agents.tasks import DEV_TASKS, TASKS, grade  # noqa: E402
+from scalable_agents.tasks import DEV_TASKS, FRESH_TASKS, TASKS, grade  # noqa: E402
 
 
 def main() -> None:
@@ -28,8 +28,9 @@ def main() -> None:
     ap.add_argument("--max-steps", type=int, default=12, help="max agent->tools loops")
     ap.add_argument("--max-nudges", type=int, default=2, help="0 disables the retry nudge")
     ap.add_argument("--repeats", type=int, default=1, help="run every task this many times")
-    ap.add_argument("--split", default="test", choices=["dev", "test"],
-                    help="'dev' (12 tasks) for trying changes; 'test' (30 tasks) for the reported number")
+    ap.add_argument("--split", default="test", choices=["dev", "test", "fresh"],
+                    help="'dev' (12) for trying changes; 'test' (30, seen while debugging the harness); "
+                         "'fresh' (30 template tasks generated after tuning) for the final number")
     ap.add_argument("--show-failures", action="store_true", help="print the full reply of failed tasks")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
@@ -40,7 +41,7 @@ def main() -> None:
     from scalable_agents.agent import build_react_agent, count_tool_calls, store_tools
     from scalable_agents.models import environment_info, ollama_chat_model
 
-    tasks = TASKS if args.split == "test" else DEV_TASKS
+    tasks = {"test": TASKS, "dev": DEV_TASKS, "fresh": FRESH_TASKS}[args.split]
     agent = build_react_agent(ollama_chat_model(args.model), store_tools(), max_nudges=args.max_nudges)
     records = []
     for rep in range(args.repeats):
@@ -95,7 +96,7 @@ def main() -> None:
         "runs_crashed_or_step_limit": sum(1 for r in records if r["error"]),
         "mean_seconds": sum(r["seconds"] for r in records) / n,
     }
-    suffix = "" if args.split == "test" else "_dev"
+    suffix = {"test": "", "dev": "_dev", "fresh": "_fresh"}[args.split]
     out_path = args.out or f"results/agent_{args.model.replace(':', '_').replace('/', '_')}{suffix}.json"
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:

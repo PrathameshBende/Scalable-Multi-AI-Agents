@@ -32,8 +32,8 @@ REACT_SYSTEM_PROMPT = """You are a careful operations assistant for an online st
 Use the tools to look up every fact you need; never guess product data, rates or fees.
 Use the calculator for arithmetic instead of doing it in your head.
 Call one tool at a time if a later step depends on an earlier result.
-When you have the result, reply briefly and end with a final line exactly like:
-FINAL ANSWER: 1234.56
+When you have the result, reply briefly and end with one final line in this format:
+FINAL ANSWER: <the number you computed>
 Write the number in plain decimal form and keep the decimal point.
 Do not add units, currency symbols or thousands separators."""
 
@@ -53,7 +53,7 @@ def store_tools() -> list[BaseTool]:
         return T.get_warehouse(name)
 
     def shipping_cost(region: str, weight_kg: float):
-        """Shipping cost in USD for a total weight in kg to a region: north, south, east, west or international."""
+        """Shipping cost in USD to a region (north, south, east, west or international). weight_kg is the TOTAL weight of the shipment: the unit weight_kg from lookup_product multiplied by the number of units."""
         return T.shipping_cost(region, weight_kg)
 
     def convert_currency(amount: float, from_currency: str, to_currency: str):
