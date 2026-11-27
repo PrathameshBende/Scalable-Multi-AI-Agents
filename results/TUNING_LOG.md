@@ -48,8 +48,22 @@ stays at the round-1 config (commit a71ea82). Script: `scripts/run_agent_round2.
 
 | # | Run | Data | Result | Kept? |
 |---|---|---|---|---|
-| R2-1 | six configs | dev_all (42) | (pending) | |
-| R2-2 | chosen config, final | fresh2 (30) | (pending) | |
+| R2-1 | six configs (Kaggle T4; Colab's free GPU quota had run out) | dev_all (42) | weight tool: 27 / 28 / 28 with 1 / 3 / 5 votes; **product tool: 35 / 35 / 35** | product tool, 1 vote (rule) |
+| R2-2 | chosen config, final | fresh2 (30) | **26/30 = 86.7%** (CI 70-95%); shipping 8/8 | reported |
+| R2-3 | chosen config, secondary | fresh (seen) / test (seen) | 25/30 = 83.3% (was 60.0%) / 21/30 = 70.0% (was 63.3%) | reported, labelled seen |
+
+What round 2 showed:
+- The tool redesign did the work (+8 of 42 on dev); voting added at most 1. The weight-tool
+  errors were systematic (e.g. dev03: all 5 votes passed the quantity 3 as the weight), and
+  majority voting cannot fix an error every sample makes.
+- New failure mode from the easier tool: on plain "total price" questions the model sometimes
+  calls `shipping_cost` and adds shipping nobody asked for (G07, A01, A04, F03, F08). This is
+  why lookup on the test set fell from 10/10 to 8/10. Not fixed: fresh2 is now used, so a fix
+  would need a round 3 with new data.
+- Round 2 ran on Kaggle, round 1 on Colab (both T4, same model and seed); GPU generation is not
+  bit-exact across machines, so small differences on the seen sets are partly noise.
+- Harness bug, no effect on results: `run_agent_round2.sh` piped through `tee /dev/stderr`,
+  which truncated the console log; the result JSONs were unaffected. Fixed afterwards.
 
 ## Retrieval (SciFact)
 

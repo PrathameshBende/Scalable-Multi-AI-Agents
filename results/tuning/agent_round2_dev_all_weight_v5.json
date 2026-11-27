@@ -1,0 +1,1298 @@
+{
+  "experiment": "react_agent",
+  "model": "qwen2.5:7b",
+  "shipping_tool": "weight",
+  "votes": 5,
+  "max_steps": 12,
+  "max_nudges": 2,
+  "summary": {
+    "n_runs": 42,
+    "n_tasks": 42,
+    "split": "dev_all",
+    "repeats": 1,
+    "shipping_tool": "weight",
+    "votes": 5,
+    "strict_success": 0.6666666666666666,
+    "strict_success_count": 28,
+    "strict_95ci": [
+      0.5155222701166692,
+      0.7898771923802769
+    ],
+    "lenient_success": 0.6666666666666666,
+    "by_category": {
+      "lookup": {
+        "pass": 10,
+        "n": 10,
+        "rate": 1.0
+      },
+      "shipping": {
+        "pass": 3,
+        "n": 12,
+        "rate": 0.25
+      },
+      "currency": {
+        "pass": 8,
+        "n": 10,
+        "rate": 0.8
+      },
+      "mixed": {
+        "pass": 7,
+        "n": 10,
+        "rate": 0.7
+      }
+    },
+    "mean_tool_calls": 15.69047619047619,
+    "runs_without_any_tool_call": 0,
+    "runs_with_tool_errors": 9,
+    "runs_crashed_or_step_limit": 0,
+    "mean_seconds": 31.27,
+    "greedy_only_strict_count": 27
+  },
+  "records": [
+    {
+      "repeat": 0,
+      "id": "dev01",
+      "category": "lookup",
+      "question": "What is the total price in USD of 7 Quartz Water Bottles?",
+      "min_tools": 2,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 147.04,
+      "error": null,
+      "reply": "The total price in USD for 7 Quartz Water Bottles is 86.8.\nFINAL ANSWER: 86.8",
+      "expected": 86.8,
+      "parsed": 86.8,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        86.8,
+        86.8,
+        86.8,
+        86.8,
+        86.8
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev02",
+      "category": "lookup",
+      "question": "How many Lumen Monitor Arms remain in stock after an order of 19?",
+      "min_tools": 2,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 10.24,
+      "error": null,
+      "reply": "FINAL ANSWER: 28.0",
+      "expected": 28.0,
+      "parsed": 28.0,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        28.0,
+        28.0,
+        28.0,
+        28.0,
+        28.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev03",
+      "category": "shipping",
+      "question": "How much does it cost in USD to ship 3 Vega Headphones to the west region?",
+      "min_tools": 3,
+      "tool_calls": 5,
+      "tools_used": [
+        "shipping_cost"
+      ],
+      "tool_errors": 0,
+      "seconds": 7.23,
+      "error": null,
+      "reply": "FINAL ANSWER: 8.25",
+      "expected": 2.31,
+      "parsed": 8.25,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        8.25,
+        8.25,
+        8.25,
+        8.25,
+        8.25
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "dev04",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 1 Lumen Monitor Arm shipped to the north region?",
+      "min_tools": 3,
+      "tool_calls": 14,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 19.19,
+      "error": null,
+      "reply": "FINAL ANSWER: 90.6",
+      "expected": 90.6,
+      "parsed": 90.6,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        90.6,
+        90.6,
+        90.6,
+        90.6,
+        90.6
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev05",
+      "category": "shipping",
+      "question": "How much does it cost in USD to ship 6 Aurora Desk Lamps to the south region?",
+      "min_tools": 3,
+      "tool_calls": 11,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost"
+      ],
+      "tool_errors": 0,
+      "seconds": 33.6,
+      "error": null,
+      "reply": "The shipping cost to ship 6 Aurora Desk Lamps to the south region is calculated as follows:\n\n1. Price per lamp: $34.5\n2. Total weight for 6 lamps: 6 * 1.2 kg = 7.2 kg\n3. Shipping cost for 7.2 kg to the south region: $4.2\n\nFINAL ANSWER: 4.2",
+      "expected": 25.2,
+      "parsed": 4.2,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        4.2,
+        216.9,
+        4.2,
+        30.24,
+        25.2
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "dev06",
+      "category": "shipping",
+      "question": "One Nimbus Kettle is shipped to the region where its own warehouse is located. What is the shipping cost in USD?",
+      "min_tools": 3,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost"
+      ],
+      "tool_errors": 0,
+      "seconds": 13.32,
+      "error": null,
+      "reply": "FINAL ANSWER: 6.30",
+      "expected": 6.3,
+      "parsed": 6.3,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        6.3,
+        6.3,
+        6.3,
+        6.3,
+        6.3
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev07",
+      "category": "currency",
+      "question": "What is the price of 2 Atlas Backpacks in JPY?",
+      "min_tools": 3,
+      "tool_calls": 12,
+      "tools_used": [
+        "lookup_product",
+        "convert_currency"
+      ],
+      "tool_errors": 0,
+      "seconds": 23.19,
+      "error": null,
+      "reply": "The price of one Atlas Backpack is 9022.25 JPY. For two backpacks, the price would be:\n\n9022.25 * 2 = 18045.50 JPY\n\nFINAL ANSWER: 18045.50",
+      "expected": 18044.5,
+      "parsed": 18045.5,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        18045.5,
+        18044.5,
+        18044.5,
+        18044.5,
+        18044.5
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev08",
+      "category": "currency",
+      "question": "What is the cost in EUR of shipping 3 Zephyr Fans to the west region?",
+      "min_tools": 4,
+      "tool_calls": 19,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "convert_currency"
+      ],
+      "tool_errors": 1,
+      "seconds": 34.71,
+      "error": null,
+      "reply": "FINAL ANSWER: 8.6",
+      "expected": 25.81,
+      "parsed": 8.6,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        8.6,
+        8.6,
+        25.81,
+        8.6,
+        120.68
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "dev09",
+      "category": "currency",
+      "question": "A customer pays 200 GBP for one Orion Chair. How much change do they get, in GBP?",
+      "min_tools": 3,
+      "tool_calls": 10,
+      "tools_used": [
+        "convert_currency",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 14.81,
+      "error": null,
+      "reply": "FINAL ANSWER: 0.00",
+      "expected": 98.09,
+      "parsed": 0.0,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "dev10",
+      "category": "mixed",
+      "question": "A silver-tier customer buys 3 Nimbus Kettles. What do they pay in USD after their tier discount?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 23.23,
+      "error": null,
+      "reply": "FINAL ANSWER: 79.77",
+      "expected": 79.77149999999999,
+      "parsed": 79.77,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        79.77,
+        79.77,
+        79.77,
+        79.77,
+        79.77
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "dev11",
+      "category": "mixed",
+      "question": "All Lumen Monitor Arms in stock are stored from 2025-03-01 to 2025-03-11 at their warehouse's per-unit daily storage fee. What is the total storage cost in USD?",
+      "min_tools": 4,
+      "tool_calls": 22,
+      "tools_used": [
+        "days_between",
+        "lookup_product",
+        "calculator",
+        "calculator",
+        "calculator"
+      ],
+      "tool_errors": 1,
+      "seconds": 32.07,
+      "error": null,
+      "reply": "FINAL ANSWER: 3042.20",
+      "expected": 18.8,
+      "parsed": 3042.2,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        3042.2,
+        3042.2,
+        152.11,
+        3042.2,
+        22.975
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "dev12",
+      "category": "mixed",
+      "question": "A gold-tier customer buys 2 Vega Headphones shipped to the east region. The discount applies to items only. What is the total in USD?",
+      "min_tools": 5,
+      "tool_calls": 27,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 6,
+      "seconds": 46.6,
+      "error": null,
+      "reply": "FINAL ANSWER: 161.16",
+      "expected": 161.16400000000002,
+      "parsed": 161.16,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        161.16,
+        161.48,
+        161.16,
+        161.16,
+        165.72
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V01",
+      "category": "lookup",
+      "question": "What is the total price in USD of 8 Quartz Water Bottle units and one Aurora Desk Lamp?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 20.68,
+      "error": null,
+      "reply": "FINAL ANSWER: 133.7",
+      "expected": 133.7,
+      "parsed": 133.7,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        133.7,
+        133.7,
+        133.7,
+        133.7,
+        133.7
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V02",
+      "category": "lookup",
+      "question": "What is the total price in USD of 15 Atlas Backpack units and one Zephyr Fan?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 19.07,
+      "error": null,
+      "reply": "FINAL ANSWER: 945.25",
+      "expected": 945.25,
+      "parsed": 945.25,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        945.25,
+        945.25,
+        945.25,
+        945.25,
+        945.25
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V03",
+      "category": "lookup",
+      "question": "What is the total price in USD of 11 Aurora Desk Lamp units?",
+      "min_tools": 2,
+      "tool_calls": 12,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 15.67,
+      "error": null,
+      "reply": "FINAL ANSWER: 379.5",
+      "expected": 379.5,
+      "parsed": 379.5,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        379.5,
+        379.5,
+        379.5,
+        379.5,
+        360.53
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V04",
+      "category": "lookup",
+      "question": "An order of 3 Nimbus Kettle units is shipped out. How many Nimbus Kettle units remain in stock?",
+      "min_tools": 2,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 14.03,
+      "error": null,
+      "reply": "The stock of Nimbus Kettle units remaining is 82.\nFINAL ANSWER: 82.00",
+      "expected": 82.0,
+      "parsed": 82.0,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        82.0,
+        82.0,
+        82.0,
+        82.0,
+        82.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V05",
+      "category": "lookup",
+      "question": "What is the total price in USD of 5 Vega Headphones units?",
+      "min_tools": 2,
+      "tool_calls": 12,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 20.78,
+      "error": null,
+      "reply": "FINAL ANSWER: 449.5",
+      "expected": 449.5,
+      "parsed": 449.5,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        449.5,
+        411.9,
+        449.5,
+        449.5,
+        449.5
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V06",
+      "category": "lookup",
+      "question": "What is the total price in USD of 15 Vega Headphones units and one Atlas Backpack?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 22.33,
+      "error": null,
+      "reply": "FINAL ANSWER: 1408.25",
+      "expected": 1408.25,
+      "parsed": 1408.25,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        1408.25,
+        1408.25,
+        1408.25,
+        1408.25,
+        1408.25
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V07",
+      "category": "lookup",
+      "question": "What is the total price in USD of 12 Aurora Desk Lamp units and one Zephyr Fan?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 25.44,
+      "error": null,
+      "reply": "The total price in USD for 12 Aurora Desk Lamp units and one Zephyr Fan is 463.0. FINAL ANSWER: 463.0",
+      "expected": 463.0,
+      "parsed": 463.0,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        463.0,
+        463.0,
+        463.0,
+        463.0,
+        463.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V08",
+      "category": "lookup",
+      "question": "An order of 11 Atlas Backpack units is shipped out. How many Atlas Backpack units remain in stock?",
+      "min_tools": 2,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 12.6,
+      "error": null,
+      "reply": "FINAL ANSWER: 299.0",
+      "expected": 299.0,
+      "parsed": 299.0,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        299.0,
+        299.0,
+        299.0,
+        299.0,
+        299.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V09",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 4 Atlas Backpack units shipped to the north region?",
+      "min_tools": 4,
+      "tool_calls": 14,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 24.87,
+      "error": null,
+      "reply": "FINAL ANSWER: 242.6",
+      "expected": 253.4,
+      "parsed": 242.6,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        242.6,
+        243.6,
+        63.35,
+        63.35,
+        242.6
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V10",
+      "category": "shipping",
+      "question": "How much does it cost in USD to ship 5 Lumen Monitor Arm units to the west region?",
+      "min_tools": 3,
+      "tool_calls": 5,
+      "tools_used": [
+        "lookup_product"
+      ],
+      "tool_errors": 0,
+      "seconds": 24.43,
+      "error": null,
+      "reply": "",
+      "expected": 56.38,
+      "parsed": null,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V11",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 5 Aurora Desk Lamp units shipped to the international region?",
+      "min_tools": 4,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 30.59,
+      "error": null,
+      "reply": "FINAL ANSWER: 186.9",
+      "expected": 244.5,
+      "parsed": 186.9,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        186.9,
+        186.9,
+        186.9,
+        186.9,
+        316.5
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V12",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 2 Lumen Monitor Arm units shipped to the international region?",
+      "min_tools": 4,
+      "tool_calls": 17,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 29.68,
+      "error": null,
+      "reply": "Calculator: 197.6 // 2\nFINAL ANSWER: 197.6",
+      "expected": 246.8,
+      "parsed": 197.6,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        197.6,
+        197.6,
+        197.6,
+        246.8,
+        197.6
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V13",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 6 Nimbus Kettle units shipped to the north region?",
+      "min_tools": 4,
+      "tool_calls": 14,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 27.77,
+      "error": null,
+      "reply": "Calculator: 175.14\n\nFINAL ANSWER: 175.14",
+      "expected": 211.14,
+      "parsed": 175.14,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        175.14,
+        222.34,
+        175.14,
+        175.14,
+        211.14
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V14",
+      "category": "shipping",
+      "question": "How much does it cost in USD to ship 1 Aurora Desk Lamp units to the international region?",
+      "min_tools": 3,
+      "tool_calls": 5,
+      "tools_used": [
+        "shipping_cost"
+      ],
+      "tool_errors": 0,
+      "seconds": 8.03,
+      "error": null,
+      "reply": "FINAL ANSWER: 18.0",
+      "expected": 14.4,
+      "parsed": 18.0,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        18.0,
+        14.4,
+        18.0,
+        18.0,
+        18.0
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V15",
+      "category": "shipping",
+      "question": "What is the total cost in USD (item price plus shipping) of 6 Vega Headphones units shipped to the west region?",
+      "min_tools": 4,
+      "tool_calls": 16,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 31.55,
+      "error": null,
+      "reply": "FINAL ANSWER: 540.17",
+      "expected": 544.0200000000001,
+      "parsed": 540.17,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        540.17,
+        544.02,
+        90.67,
+        540.17,
+        540.17
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V16",
+      "category": "shipping",
+      "question": "How much does it cost in USD to ship 6 Zephyr Fan units to the east region?",
+      "min_tools": 3,
+      "tool_calls": 5,
+      "tools_used": [
+        "lookup_product"
+      ],
+      "tool_errors": 0,
+      "seconds": 24.56,
+      "error": null,
+      "reply": "",
+      "expected": 107.1,
+      "parsed": null,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V17",
+      "category": "currency",
+      "question": "What is the total price of 6 Lumen Monitor Arm units in EUR?",
+      "min_tools": 3,
+      "tool_calls": 14,
+      "tools_used": [
+        "lookup_product",
+        "convert_currency",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 24.75,
+      "error": null,
+      "reply": "FINAL ANSWER: 409.56",
+      "expected": 409.58,
+      "parsed": 409.56,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        409.56,
+        409.56,
+        68.26,
+        409.56,
+        409.56
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V18",
+      "category": "currency",
+      "question": "What is the total price of 5 Orion Chair units in INR?",
+      "min_tools": 3,
+      "tool_calls": 11,
+      "tools_used": [
+        "lookup_product",
+        "convert_currency",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 25.46,
+      "error": null,
+      "reply": "The total price of 5 Orion Chair units in INR is 53535.0.\n\nFINAL ANSWER: 53535.0",
+      "expected": 53535.0,
+      "parsed": 53535.0,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        53535.0,
+        null,
+        10707.0,
+        53535.0,
+        53535.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V19",
+      "category": "currency",
+      "question": "What is the total price of 2 Vega Headphones units in GBP?",
+      "min_tools": 3,
+      "tool_calls": 10,
+      "tools_used": [
+        "lookup_product",
+        "convert_currency"
+      ],
+      "tool_errors": 0,
+      "seconds": 25.1,
+      "error": null,
+      "reply": "FINAL ANSWER: 142.04",
+      "expected": 142.04,
+      "parsed": 142.04,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        142.04,
+        142.04,
+        142.04,
+        142.04,
+        142.04
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V20",
+      "category": "currency",
+      "question": "What is the cost in INR of shipping 4 Zephyr Fan units to the north region?",
+      "min_tools": 4,
+      "tool_calls": 17,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "shipping_cost",
+        "convert_currency"
+      ],
+      "tool_errors": 4,
+      "seconds": 45.27,
+      "error": null,
+      "reply": "FINAL ANSWER: 4515.2",
+      "expected": 4515.2,
+      "parsed": 4515.2,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        null,
+        4515.2,
+        6049.28,
+        null,
+        17396.8
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V21",
+      "category": "currency",
+      "question": "What is the cost in GBP of shipping 3 Quartz Water Bottle units to the international region?",
+      "min_tools": 4,
+      "tool_calls": 17,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "convert_currency"
+      ],
+      "tool_errors": 0,
+      "seconds": 30.41,
+      "error": null,
+      "reply": "FINAL ANSWER: 9.95",
+      "expected": 9.95,
+      "parsed": 9.95,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        9.95,
+        9.95,
+        9.95,
+        9.95,
+        28.93
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V22",
+      "category": "currency",
+      "question": "What is the cost in INR of shipping 1 Zephyr Fan units to the west region?",
+      "min_tools": 4,
+      "tool_calls": 17,
+      "tools_used": [
+        "shipping_cost",
+        "lookup_product",
+        "convert_currency",
+        "shipping_cost",
+        "lookup_product",
+        "convert_currency",
+        "shipping_cost",
+        "lookup_product",
+        "convert_currency"
+      ],
+      "tool_errors": 2,
+      "seconds": 29.56,
+      "error": null,
+      "reply": "FINAL ANSWER: 776.05",
+      "expected": 776.05,
+      "parsed": 776.05,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        776.05,
+        914.55,
+        1037.5,
+        1307.25,
+        660.0
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V23",
+      "category": "currency",
+      "question": "What is the cost in GBP of shipping 1 Aurora Desk Lamp units to the west region?",
+      "min_tools": 4,
+      "tool_calls": 18,
+      "tools_used": [
+        "lookup_product",
+        "shipping_cost",
+        "convert_currency",
+        "convert_currency",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 25.98,
+      "error": null,
+      "reply": "FINAL ANSWER: 2.61",
+      "expected": 2.61,
+      "parsed": 2.61,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        2.61,
+        12.63,
+        11.85,
+        10.26,
+        14.58
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V24",
+      "category": "mixed",
+      "question": "A gold-tier customer buys 7 Orion Chair units shipped to the north region. The discount applies to items only, not shipping. What is the total in USD?",
+      "min_tools": 5,
+      "tool_calls": 28,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator",
+        "shipping_cost",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 7,
+      "seconds": 77.06,
+      "error": null,
+      "reply": "FINAL ANSWER: 1060.64",
+      "expected": 1060.6399999999999,
+      "parsed": 1060.64,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        1060.64,
+        1044.8,
+        null,
+        1060.64,
+        1027.39
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V25",
+      "category": "mixed",
+      "question": "A silver-tier customer buys 4 Zephyr Fan units. What do they pay in USD after their tier discount?",
+      "min_tools": 3,
+      "tool_calls": 16,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 25.72,
+      "error": null,
+      "reply": "FINAL ANSWER: 186.20",
+      "expected": 186.2,
+      "parsed": 186.2,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        186.2,
+        176.89,
+        186.2,
+        186.2,
+        186.2
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V26",
+      "category": "mixed",
+      "question": "A gold-tier customer buys 2 Zephyr Fan units. What do they pay in USD after their tier discount?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 22.76,
+      "error": null,
+      "reply": "FINAL ANSWER: 86.24",
+      "expected": 86.24,
+      "parsed": 86.24,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        86.24,
+        86.24,
+        86.24,
+        86.24,
+        75.89
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V27",
+      "category": "mixed",
+      "question": "A gold-tier customer buys 7 Lumen Monitor Arm units. What do they pay in USD after their tier discount?",
+      "min_tools": 3,
+      "tool_calls": 15,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator"
+      ],
+      "tool_errors": 0,
+      "seconds": 19.68,
+      "error": null,
+      "reply": "FINAL ANSWER: 457.07",
+      "expected": 457.072,
+      "parsed": 457.07,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        457.07,
+        457.07,
+        457.07,
+        457.07,
+        457.07
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V28",
+      "category": "mixed",
+      "question": "A silver-tier customer buys 8 Vega Headphones units shipped to the south region. The discount applies to items only, not shipping. What is the total in USD?",
+      "min_tools": 5,
+      "tool_calls": 25,
+      "tools_used": [
+        "lookup_product",
+        "customer_discount",
+        "calculator",
+        "shipping_cost",
+        "shipping_cost",
+        "calculator"
+      ],
+      "tool_errors": 4,
+      "seconds": 48.68,
+      "error": null,
+      "reply": "FINAL ANSWER: 691.08",
+      "expected": 691.08,
+      "parsed": 691.08,
+      "strict": true,
+      "lenient": true,
+      "votes": [
+        691.08,
+        null,
+        691.08,
+        691.08,
+        683.24
+      ],
+      "greedy_strict": true
+    },
+    {
+      "repeat": 0,
+      "id": "V29",
+      "category": "mixed",
+      "question": "5 Zephyr Fan units are stored at their warehouse from 2025-08-05 to 2025-08-09. Using that warehouse's per-unit daily storage fee and the number of days between those dates, what is the total storage cost in USD?",
+      "min_tools": 4,
+      "tool_calls": 26,
+      "tools_used": [
+        "days_between",
+        "get_warehouse",
+        "lookup_product",
+        "get_warehouse",
+        "calculator"
+      ],
+      "tool_errors": 7,
+      "seconds": 38.65,
+      "error": null,
+      "reply": "FINAL ANSWER: 2665.6",
+      "expected": 0.6,
+      "parsed": 2665.6,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        2665.6,
+        0.5,
+        500.0,
+        0.6,
+        45.0
+      ],
+      "greedy_strict": false
+    },
+    {
+      "repeat": 0,
+      "id": "V30",
+      "category": "mixed",
+      "question": "8 Vega Headphones units are stored at their warehouse from 2025-08-09 to 2025-08-23. Using that warehouse's per-unit daily storage fee and the number of days between those dates, what is the total storage cost in USD?",
+      "min_tools": 4,
+      "tool_calls": 70,
+      "tools_used": [
+        "days_between",
+        "get_warehouse",
+        "calculator",
+        "days_between",
+        "get_warehouse",
+        "calculator",
+        "days_between",
+        "calculator",
+        "days_between",
+        "calculator",
+        "days_between",
+        "calculator",
+        "days_between",
+        "calculator"
+      ],
+      "tool_errors": 25,
+      "seconds": 116.95,
+      "error": null,
+      "reply": "FINAL ANSWER: 4.48",
+      "expected": 3.36,
+      "parsed": 4.48,
+      "strict": false,
+      "lenient": false,
+      "votes": [
+        4.48,
+        4.48,
+        4.48,
+        54.88,
+        4.48
+      ],
+      "greedy_strict": false
+    }
+  ],
+  "env": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "numpy": "2.1.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.20.2",
+    "sentence-transformers": "5.7.0",
+    "onnx": "1.23.2",
+    "langgraph": "1.2.17",
+    "langchain-core": "1.7.0",
+    "langchain-ollama": "1.2.0",
+    "rank-bm25": "0.2.2",
+    "cuda_device": "Tesla T4"
+  }
+}

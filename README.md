@@ -20,7 +20,7 @@ scalable_agents/
   metrics.py     hit@k, recall@k, MRR, nDCG, Wilson CI, McNemar test
   agent.py       LangGraph ReAct loop (agent <-> tools), RAG agent, store tools
   tools.py       7 pure-Python tools over fictional store data
-  tasks.py       30 multi-step tasks, answers computed from the tools, grader
+  tasks.py       test (30), dev (12+30) and fresh (30+30) task sets, answers computed from the tools, grader
   compress.py    ONNX export / int8 quantization / ONNX embedder; llama.cpp output parsers
   data.py        BEIR SciFact loader
 scripts/         one script per experiment; each writes results/<name>.json
@@ -51,14 +51,14 @@ Experiments (Colab T4): `python scripts/make_zip.py`, open `notebooks/colab_run_
 in Colab, Run all, upload `dist/project.zip` when asked, then unzip the downloaded
 `results.zip` into `results/`. `python scripts/summarize.py` rebuilds `results/SUMMARY.md`.
 
-## Results (Colab T4, 2026-11-27)
+## Results (Colab T4 and Kaggle T4, 2026-11-27)
 
 Full tables: `results/SUMMARY.md`. Every change made after seeing a number: `results/TUNING_LOG.md`.
 
 | Experiment | Headline (honest) |
 |---|---|
 | Retrieval, SciFact test (300 q) | HyDE + BM25 fused with RRF: nDCG@10 0.645 -> 0.694 (**+7.6%**), hit@5 0.753 -> 0.780 (+2.7 pts, p = 0.24, not significant) |
-| ReAct agent, qwen2.5:7b | **63.3%** (19/30) on the test tasks; **60.0%** (18/30) on 30 fresh tasks generated after tuning |
+| ReAct agent, qwen2.5:7b | Round 1: **60.0%** (18/30) on 30 fresh tasks. Round 2, after redesigning the shipping tool so the tool (not the model) multiplies unit weight by quantity: **86.7%** (26/30, 95% CI 70-95%) on 30 new tasks run once. Self-consistency voting (3 or 5 samples) added nothing on 42 dev tasks. |
 | ONNX int8 embedder | 90.4 -> 22.9 MB (**-74.9%**); nDCG@10 -0.97% relative, hit@5 -3.0 pts |
 | GGUF | not finished (llama.cpp CUDA build too slow on Colab's 2 CPU cores) |
 

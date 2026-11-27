@@ -11,7 +11,10 @@ for TOOL in weight product; do
   python scripts/run_agent_eval.py --model $M --split dev_all --shipping $TOOL --votes 5 \
     --out results/tuning/agent_round2_dev_all_${TOOL}_v5.json
 done
-CHOICE=$(python scripts/select_round2.py | tee /dev/stderr | awk '/^CHOICE/ {print $2, $3}')
+# (Not `tee /dev/stderr`: when stderr is redirected to a file, tee reopens and truncates it.)
+python scripts/select_round2.py > results/tuning/round2_select.txt
+cat results/tuning/round2_select.txt
+CHOICE=$(awk '/^CHOICE/ {print $2, $3}' results/tuning/round2_select.txt)
 read TOOL VOTES <<< "$CHOICE"
 python scripts/run_agent_eval.py --model $M --split fresh2 --shipping $TOOL --votes $VOTES \
   --out results/agent_round2_fresh2.json

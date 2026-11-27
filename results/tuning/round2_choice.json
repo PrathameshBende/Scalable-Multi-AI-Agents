@@ -1,0 +1,50 @@
+{
+  "rule": [
+    "Rule: highest strict count on dev_all wins; ties go to fewer votes (cheaper), then to",
+    "the 'weight' tool (unchanged interface). Writes results/tuning/round2_choice.json."
+  ],
+  "table": [
+    {
+      "shipping": "weight",
+      "votes": 1,
+      "strict": 27,
+      "n": 42
+    },
+    {
+      "shipping": "weight",
+      "votes": 3,
+      "strict": 28,
+      "n": 42
+    },
+    {
+      "shipping": "weight",
+      "votes": 5,
+      "strict": 28,
+      "n": 42
+    },
+    {
+      "shipping": "product",
+      "votes": 1,
+      "strict": 35,
+      "n": 42
+    },
+    {
+      "shipping": "product",
+      "votes": 3,
+      "strict": 35,
+      "n": 42
+    },
+    {
+      "shipping": "product",
+      "votes": 5,
+      "strict": 35,
+      "n": 42
+    }
+  ],
+  "chosen": {
+    "shipping": "product",
+    "votes": 1,
+    "strict": 35,
+    "n": 42
+  }
+}

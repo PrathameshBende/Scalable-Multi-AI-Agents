@@ -27,13 +27,28 @@ Embedder `sentence-transformers/all-MiniLM-L6-v2`, LLM `qwen2.5:3b`. Baseline = 
 
 (s/query for hyde includes generating the passage; hyde_hybrid reused the cached passages.)
 
-## ReAct agent: `qwen2.5:7b` on the test set (30 tasks)
+## ReAct agent, round 2 (Kaggle T4, 2026-11-27): shipping tool `product`, 1 vote
+
+Config chosen on 42 dev tasks by a pre-declared rule (`results/tuning/round2_choice.json`):
+weight tool 27/28/28 and product tool 35/35/35 of 42 with 1/3/5 votes.
+
+| set | round 1 (weight tool) | round 2 (product tool) |
+|---|---|---|
+| **fresh2** (30 new tasks, run once) | - | **26/30 = 86.7%** (95% CI 70-95%); lookup 7/8, shipping 8/8, currency 5/7, mixed 6/7 |
+| fresh (already seen) | 18/30 = 60.0% | 25/30 = 83.3% (CI 66-93%); 1 run hit the step limit |
+| test (already seen) | 19/30 = 63.3% | 21/30 = 70.0% (CI 52-83%); lookup 10/10 -> 8/10, shipping 0/6 -> 5/6 |
+
+New failure mode: on plain "total price" questions the model sometimes calls the new
+`shipping_cost` tool and adds shipping (G07, A01, A04, F03, F08). Remaining failures are
+mostly currency (wrong amount converted) and one storage-fee task that looped to the step limit.
+
+## ReAct agent, round 1: `qwen2.5:7b` on the test set (30 tasks)
 - Strict success: **19/30 = 63.3%** (95% CI 46-78%)
 - Lenient success (any number correct): 63.3%
 - Mean tool calls: 3.2; runs with no tool call: 0; crashed/step limit: 0; mean 4.6s per task
 - By category: lookup 10/10, shipping 0/6, currency 3/6, mixed 6/8
 
-## ReAct agent: `qwen2.5:7b` on the fresh set (30 tasks)
+## ReAct agent, round 1: `qwen2.5:7b` on the fresh set (30 tasks)
 - Strict success: **18/30 = 60.0%** (95% CI 42-75%)
 - Lenient success (any number correct): 60.0%
 - Mean tool calls: 3.2; runs with no tool call: 0; crashed/step limit: 0; mean 4.0s per task
