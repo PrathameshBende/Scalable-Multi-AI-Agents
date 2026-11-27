@@ -51,9 +51,16 @@ Experiments (Colab T4): `python scripts/make_zip.py`, open `notebooks/colab_run_
 in Colab, Run all, upload `dist/project.zip` when asked, then unzip the downloaded
 `results.zip` into `results/`. `python scripts/summarize.py` rebuilds `results/SUMMARY.md`.
 
-## Results
+## Results (Colab T4, 2026-11-27)
 
-See `results/SUMMARY.md` (generated from the JSON files; not edited by hand).
+Full tables: `results/SUMMARY.md`. Every change made after seeing a number: `results/TUNING_LOG.md`.
+
+| Experiment | Headline (honest) |
+|---|---|
+| Retrieval, SciFact test (300 q) | HyDE + BM25 fused with RRF: nDCG@10 0.645 -> 0.694 (**+7.6%**), hit@5 0.753 -> 0.780 (+2.7 pts, p = 0.24, not significant) |
+| ReAct agent, qwen2.5:7b | **63.3%** (19/30) on the test tasks; **60.0%** (18/30) on 30 fresh tasks generated after tuning |
+| ONNX int8 embedder | 90.4 -> 22.9 MB (**-74.9%**); nDCG@10 -0.97% relative, hit@5 -3.0 pts |
+| GGUF | not finished (llama.cpp CUDA build too slow on Colab's 2 CPU cores) |
 
 ## Known limitations
 
