@@ -151,12 +151,13 @@ DEV_TASKS: list[Task] = [
          lambda: _price("vega headphones", 2) * (1 - disc("gold")) + ship("east", _weight("vega headphones", 2)), 5),
 ]
 
-def make_fresh_tasks(seed: int = 2026) -> list[Task]:
+def make_fresh_tasks(seed: int = 2026, prefix: str = "F", exclude: list[Task] = ()) -> list[Task]:
     """30 NEW tasks from templates, generated after all tuning was finished.
 
     The original TASKS were looked at while debugging the harness, so the final agent
     number is reported on these instead: same four categories, random products,
     quantities, regions, currencies, tiers and dates (fixed seed, so reproducible).
+    ``exclude`` lists other generated tasks whose questions must not repeat.
     """
     import random
 
@@ -165,13 +166,13 @@ def make_fresh_tasks(seed: int = 2026) -> list[Task]:
     regions = ["north", "south", "east", "west", "international"]
     currencies = ["INR", "EUR", "GBP", "JPY"]
     tiers = ["silver", "gold"]
-    seen = {t.question for t in TASKS} | {t.question for t in DEV_TASKS}
+    seen = {t.question for t in [*TASKS, *DEV_TASKS, *exclude]}
     out: list[Task] = []
 
     def add(cat, q, fn, k):
         if q not in seen:
             seen.add(q)
-            out.append(Task(f"F{len(out) + 1:02d}", cat, q, fn, k))
+            out.append(Task(f"{prefix}{len(out) + 1:02d}", cat, q, fn, k))
 
     def n(cat):
         return sum(t.category == cat for t in out)
@@ -258,6 +259,22 @@ def close(pred: float | None, expected: float, rel: float = 0.01, abs_tol: float
     return pred is not None and abs(pred - expected) <= max(abs_tol, rel * abs(expected))
 
 
+def majority_vote(answers: list[float | None]) -> int:
+    """Index of the answer that agrees (within grading tolerance) with the most answers.
+
+    Self-consistency (Wang et al., 2022). ``None`` (no FINAL ANSWER) gets no vote. Ties go
+    to the earliest index, so with one answer, or no agreement, index 0 (the greedy run) wins.
+    """
+    best, best_support = 0, 0
+    for i, a in enumerate(answers):
+        if a is None:
+            continue
+        support = sum(1 for o in answers if o is not None and close(o, a))
+        if support > best_support:
+            best, best_support = i, support
+    return best
+
+
 def grade(task: Task, reply: str) -> dict:
     exp = task.expected
     final = parse_final_answer(reply)
@@ -270,3 +287,11 @@ def grade(task: Task, reply: str) -> dict:
 
 
 FRESH_TASKS: list[Task] = make_fresh_tasks()
+
+# Round 2 (agent improvements, 2026-11-27). FRESH_TASKS has now been used for a reported
+# number, so a second round needs new data on both sides:
+# - DEV2_TASKS (30): extra dev data from the same templates; changes are judged on
+#   DEV_TASKS + DEV2_TASKS (42 tasks) instead of 12.
+# - FRESH2_TASKS (30): generated before any round-2 run and used once, for the final number.
+FRESH2_TASKS: list[Task] = make_fresh_tasks(seed=2027, prefix="G", exclude=FRESH_TASKS)
+DEV2_TASKS: list[Task] = make_fresh_tasks(seed=7, prefix="V", exclude=[*FRESH_TASKS, *FRESH2_TASKS])

@@ -35,18 +35,22 @@ def main() -> None:
         lines.append("")
 
     for p in sorted(glob.glob(os.path.join(R, "agent_*.json"))):
-        if p.endswith("_dev.json"):
-            continue
         d = load(p)
         s = d["summary"]
+        if s.get("split", "test").startswith("dev") or p.endswith("_dev.json"):
+            continue  # dev runs are for choosing configs, not for quoting
         lo, hi = s["strict_95ci"]
-        lines += [f"## ReAct agent: `{d['model']}` on the {s.get('split', 'test')} set ({s['n_tasks']} tasks)",
+        config = f"shipping tool `{d.get('shipping_tool', 'weight')}`, {d.get('votes', 1)} vote(s)"
+        lines += [f"## ReAct agent: `{d['model']}` on the {s.get('split', 'test')} set ({s['n_tasks']} tasks; {config})",
                   f"- Strict success: **{s['strict_success_count']}/{s['n_runs']} = {100 * s['strict_success']:.1f}%** "
                   f"(95% CI {100 * lo:.0f}-{100 * hi:.0f}%)",
                   f"- Lenient success (any number correct): {100 * s['lenient_success']:.1f}%",
                   f"- Mean tool calls: {s['mean_tool_calls']:.1f}; runs with no tool call: {s['runs_without_any_tool_call']}; "
                   f"crashed/step limit: {s['runs_crashed_or_step_limit']}; mean {s['mean_seconds']:.1f}s per task",
-                  "- By category: " + ", ".join(f"{c} {v['pass']}/{v['n']}" for c, v in s["by_category"].items()), ""]
+                  "- By category: " + ", ".join(f"{c} {v['pass']}/{v['n']}" for c, v in s["by_category"].items())]
+        if "greedy_only_strict_count" in s:
+            lines.append(f"- Greedy run alone (vote 0): {s['greedy_only_strict_count']}/{s['n_runs']}")
+        lines.append("")
 
     p = os.path.join(R, "onnx.json")
     if os.path.exists(p):

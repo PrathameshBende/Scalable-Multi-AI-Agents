@@ -32,8 +32,8 @@ REACT_SYSTEM_PROMPT = """You are a careful operations assistant for an online st
 Use the tools to look up every fact you need; never guess product data, rates or fees.
 Use the calculator for arithmetic instead of doing it in your head.
 Call one tool at a time if a later step depends on an earlier result.
-When you have the result, reply briefly and end with one final line in this format:
-FINAL ANSWER: <the number you computed>
+When you have the result, reply briefly and end with a final line exactly like:
+FINAL ANSWER: 1234.56
 Write the number in plain decimal form and keep the decimal point.
 Do not add units, currency symbols or thousands separators."""
 
@@ -43,7 +43,17 @@ class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 
-def store_tools() -> list[BaseTool]:
+def store_tools(shipping: str = "weight") -> list[BaseTool]:
+    """The 7 store tools. ``shipping`` picks the shipping tool's interface:
+
+    - "weight"  (v1): shipping_cost(region, weight_kg); the model must multiply unit weight
+      by quantity itself. Shipping was the weakest category (0/6 on the test set).
+    - "product" (v2): shipping_cost(region, product, quantity); the tool looks up the
+      weight and multiplies, removing that step from the model's chain.
+    """
+    if shipping not in ("weight", "product"):
+        raise ValueError(f"shipping must be 'weight' or 'product', got {shipping!r}")
+
     def lookup_product(name: str):
         """Look up a product by name. Returns price_usd, weight_kg (per unit), stock and warehouse."""
         return T.lookup_product(name)
@@ -53,7 +63,7 @@ def store_tools() -> list[BaseTool]:
         return T.get_warehouse(name)
 
     def shipping_cost(region: str, weight_kg: float):
-        """Shipping cost in USD to a region (north, south, east, west or international). weight_kg is the TOTAL weight of the shipment: the unit weight_kg from lookup_product multiplied by the number of units."""
+        """Shipping cost in USD for a total weight in kg to a region: north, south, east, west or international."""
         return T.shipping_cost(region, weight_kg)
 
     def convert_currency(amount: float, from_currency: str, to_currency: str):
@@ -71,6 +81,11 @@ def store_tools() -> list[BaseTool]:
     def calculator(expression: str):
         """Evaluate an arithmetic expression, e.g. '3 * 34.5 + 2.75'. Supports + - * / // % ** round floor ceil min max abs sqrt."""
         return T.calculator(expression)
+
+    if shipping == "product":
+        def shipping_cost(region: str, product: str, quantity: int = 1):  # noqa: F811
+            """Shipping cost in USD for `quantity` units of one product to a region (north, south, east, west or international). For a shipment with several different products, call once per product and add the costs."""
+            return T.ship_products(region, product, quantity)
 
     fns = [lookup_product, get_warehouse, shipping_cost, convert_currency,
            customer_discount, days_between, calculator]

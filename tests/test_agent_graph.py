@@ -112,3 +112,18 @@ def test_nudges_are_capped():
         {"messages": [HumanMessage(content="q")]})["messages"]
     assert len(llm.replies) == 2  # 1 first try + 2 nudged tries used
     assert msgs[-1].content == "dunno"
+
+
+def test_product_shipping_tool_variant():
+    import pytest
+
+    llm = ScriptedLLM([
+        AIMessage(content="", tool_calls=[call("shipping_cost", {"region": "south", "product": "nimbus kettle", "quantity": 4}, "c1")]),
+        AIMessage(content="FINAL ANSWER: 25.2"),
+    ])
+    tools = store_tools(shipping="product")
+    assert len(tools) == 7 and "quantity" in next(t for t in tools if t.name == "shipping_cost").args
+    out = build_react_agent(llm, tools).invoke({"messages": [HumanMessage(content="q")]})
+    assert json.loads(out["messages"][2].content)["result"] == 25.2
+    with pytest.raises(ValueError):
+        store_tools(shipping="drone")

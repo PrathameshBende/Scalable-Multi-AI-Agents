@@ -71,6 +71,14 @@ def shipping_cost(region: str, weight_kg: float) -> float:
     return round(SHIPPING_USD_PER_KG[key] * float(weight_kg), 2)
 
 
+def ship_products(region: str, product: str, quantity: int = 1) -> float:
+    """Shipping cost for `quantity` units of one product: the tool does the weight lookup
+    and multiplication itself, so the model cannot mix up unit and total weight."""
+    if quantity < 0 or float(quantity) != int(quantity):
+        raise ToolError("quantity must be a non-negative whole number")
+    return shipping_cost(region, lookup_product(product)["weight_kg"] * int(quantity))
+
+
 def convert_currency(amount: float, from_currency: str, to_currency: str) -> float:
     f, t = from_currency.upper().strip(), to_currency.upper().strip()
     for c in (f, t):

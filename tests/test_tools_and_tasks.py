@@ -83,3 +83,46 @@ def test_fresh_tasks_are_new_balanced_and_reproducible():
     assert not old & {t.question for t in FRESH_TASKS}
     assert [t.question for t in make_fresh_tasks()] == [t.question for t in FRESH_TASKS]
     assert all(math.isfinite(t.expected) for t in FRESH_TASKS)
+
+
+def test_ship_products_does_the_weight_math():
+    # 4 Nimbus Kettles (1.8 kg each) to the south (3.5 USD/kg) = 7.2 kg * 3.5 = 25.2
+    assert T.ship_products("south", "Nimbus Kettle", 4) == T.shipping_cost("south", 7.2) == 25.2
+    with pytest.raises(T.ToolError):
+        T.ship_products("south", "nimbus kettle", 2.5)
+    with pytest.raises(T.ToolError):
+        T.ship_products("mars", "nimbus kettle", 1)
+
+
+def test_task_answers_reachable_with_per_product_shipping():
+    # B06 ships two products together; with the v2 tool the agent adds two per-product
+    # quotes. Rounding each quote separately must stay within grading tolerance.
+    b06 = next(t for t in TASKS if t.id == "B06")
+    via_v2 = (T.lookup_product("quartz water bottle")["price_usd"] * 5 + T.lookup_product("vega headphones")["price_usd"]
+              + T.ship_products("west", "quartz water bottle", 5) + T.ship_products("west", "vega headphones", 1))
+    assert close(via_v2, b06.expected)
+
+
+def test_majority_vote():
+    from scalable_agents.tasks import majority_vote
+
+    assert majority_vote([5.0]) == 0
+    assert majority_vote([5.0, 7.0, 7.0]) == 1          # majority beats the greedy run
+    assert majority_vote([5.0, 7.0, 9.0]) == 0          # no agreement: greedy run
+    assert majority_vote([None, 7.0, 7.004]) == 1       # within tolerance counts as agreement
+    assert majority_vote([None, None, None]) == 0
+
+
+def test_round2_task_sets_are_new_balanced_and_disjoint():
+    from scalable_agents.tasks import DEV2_TASKS, DEV_TASKS, FRESH2_TASKS, FRESH_TASKS
+
+    sets = {"test": TASKS, "dev": DEV_TASKS, "fresh": FRESH_TASKS, "fresh2": FRESH2_TASKS, "dev2": DEV2_TASKS}
+    qs = {k: {t.question for t in v} for k, v in sets.items()}
+    names = list(qs)
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            assert not qs[a] & qs[b], (a, b)
+    for ts, prefix in ((FRESH2_TASKS, "G"), (DEV2_TASKS, "V")):
+        cats = [t.category for t in ts]
+        assert [cats.count(c) for c in ("lookup", "shipping", "currency", "mixed")] == [8, 8, 7, 7]
+        assert all(t.id.startswith(prefix) and math.isfinite(t.expected) for t in ts)

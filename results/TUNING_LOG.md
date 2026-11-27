@@ -24,6 +24,33 @@ Run 0 is kept in `results/tuning/agent_qwen2.5_7b_test_v1_digits_prompt.json`. N
 was a test-set run; the bug was found by reading its failed replies, which is a harness
 fix, not tuning toward the test answers.
 
+### Round 2 (agent improvements), protocol written before any round-2 run
+
+Motivation: shipping was the weakest category (0/6 test, 3/8 fresh). The model has to
+multiply the unit weight by the quantity before calling `shipping_cost`, and sometimes
+passed the unit weight. A longer chain also multiplies the chance of one wrong step.
+
+Changes under test (code: `store_tools(shipping=...)`, `run_agent_eval.py --votes`):
+- **Shipping tool v2**: `shipping_cost(region, product, quantity)`. The tool looks up the
+  weight and multiplies. The questions and expected answers are unchanged.
+- **Self-consistency**: run each task N times (vote 0 greedy, votes 1.. at temperature 0.7
+  with seeds 1..), take the FINAL ANSWER most runs agree on (ties -> greedy run).
+
+Data: all earlier sets have now been looked at, so round 2 uses new ones (`tasks.py`):
+- `DEV2_TASKS` (30, seed 7) + the old 12 dev tasks = **dev_all, 42 tasks**, for choosing.
+- `FRESH2_TASKS` (30, seed 2027), generated before any round-2 run, **used once**.
+
+Rule (`scripts/select_round2.py`): score six configs {weight, product} x {1, 3, 5 votes}
+on dev_all; highest strict count wins; ties -> fewer votes, then the old weight tool.
+The winner runs once on fresh2 (reported). It also runs on the old test and fresh sets,
+reported as secondary and labelled "already seen". Model stays qwen2.5:7b. The prompt
+stays at the round-1 config (commit a71ea82). Script: `scripts/run_agent_round2.sh`.
+
+| # | Run | Data | Result | Kept? |
+|---|---|---|---|---|
+| R2-1 | six configs | dev_all (42) | (pending) | |
+| R2-2 | chosen config, final | fresh2 (30) | (pending) | |
+
 ## Retrieval (SciFact)
 
 Pre-declared before any run: baseline = dense (all-MiniLM-L6-v2); primary metric = hit@5;
